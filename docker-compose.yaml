@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: d@tabase_123
+      POSTGRES_DB: moviedb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d moviedb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: node:26-bookworm-slim
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      DATABASE_URL: "postgresql://admin:d%40tabase_123@db:5432/moviedb"
+    command: sh -c "npm ci --include=optional && npm run dev -- --hostname 0.0.0.0"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
