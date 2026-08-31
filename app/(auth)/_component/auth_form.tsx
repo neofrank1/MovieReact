@@ -21,7 +21,7 @@ export default function AuthForm({formType} : {formType: number}) {
             const result = await authClient.signUp.email({ email, password, name });
             if (result.data?.token) {
                 console.log("Sign Up successful:", result);
-                router.push("/dashboard");
+                router.push("/");
             } else {
                 console.log("Sign Up failed");
             }
@@ -29,7 +29,7 @@ export default function AuthForm({formType} : {formType: number}) {
             const result = await authClient.signIn.email({ email, password });
             if (result.data?.token) {
                 console.log("Login successful:", result);
-                router.push("/dashboard");
+                router.push("/");
             } else {
                 console.log("Login failed");
             }
@@ -69,11 +69,11 @@ export default function AuthForm({formType} : {formType: number}) {
             <div className="flex w-80 flex-col gap-4">
                 <div className="flex flex-col gap-1">
                     <Label htmlFor="input-type-email">Email</Label>
-                    <Input id="input-type-email" placeholder="example@example.com" type="email" />
+                    <Input id="input-type-email" placeholder="example@example.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
                 </div>
                 <div className="flex flex-col gap-1">
                     <Label htmlFor="input-type-password">Password</Label>
-                    <Input id="input-type-password" placeholder="Password" type="password" />
+                    <Input id="input-type-password" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                 </div>
             </div>
             <Button className="mt-4 w-80" type="submit" >Login</Button>
