@@ -7,23 +7,35 @@ import NextLink from "next/link";
 import Image from "next/image";
 import { buttonVariants } from "@heroui/styles";
 
-const trending = [
-  { title: "Cinder", rating: 7.9 },
-  { title: "Low Tide", rating: 6.4 },
-  { title: "Orbit", rating: 8.2 },
-  { title: "The Quiet Hour", rating: 7.1 },
-  { title: "Wildfire", rating: 9.0 },
-  { title: "Static", rating: 6.8 },
-];
-
 const latestReviews = [
   { title: "Cinder", author: "Jamie Lee", time: "3 days ago" },
   { title: "Orbit", author: "Alex Chan", time: "5 days ago" },
   { title: "Wildfire", author: "Priya Nair", time: "1 week ago" },
 ];
 
+  async function getTrending() {
+    const res = await fetch(
+      "https://api.themoviedb.org/3/trending/movie/week",
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${process.env.TMDB_TOKEN}`,
+        },
+        next: { revalidate: 3600 }, // cache for 1 hour
+      }
+    );
 
-export default function Home() {
+    if (!res.ok) throw new Error("Failed to fetch trending movies");
+    return res.json();
+  }
+
+export default async function Home() {
+
+  const data = await getTrending();
+  const trending = data.results ?? [];
+  console.log("Trending movies:", trending);
+  const IMAGE_BASE = "https://image.tmdb.org/t/p/w342";
+
   return (
     <>
       <Navbar />
@@ -65,15 +77,27 @@ export default function Home() {
 
         {/* Trending strip */}
         <section className="mt-10">
-          <h2 className="text-sm font-medium mb-3">Trending this week</h2>
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-            {trending.map((movie) => (
-              <Link key={movie.title} href={`/movies/${movie.title.toLowerCase()}`}>
-                <div className="aspect-[2/3] bg-content2 border border-divider rounded-medium hover:border-foreground-300 transition-colors" />
-                <p className="text-xs text-foreground-500 mt-1 flex items-center gap-1">
-                  <Star size={11} /> {movie.rating}
+          <h2 className="text-sm mb-3 font-bold">TRENDING MOVIES THIS WEEK</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+            {trending.slice(0, 4).map((movie: any) => (
+              <NextLink key={movie.id} href={`/movies/${movie.id}`}>
+                <div className="relative aspect-[2/3] bg-content2 border border-divider rounded-medium overflow-hidden hover:border-foreground-300 transition-colors">
+                  {movie.poster_path && (
+                    <Image
+                      src={`${IMAGE_BASE}${movie.poster_path}`}
+                      alt={movie.title}
+                      fill
+                      sizes="(max-width: 640px) 50vw, 25vw"
+                      className="object-cover"
+                    />
+                  )}
+                </div>
+                <p className="text-sm font-medium mt-2 line-clamp-1">{movie.title}</p>
+                <p className="text-xs text-foreground-500 mt-0.5 flex items-center gap-1">
+                  <Star size={11} />
+                  {movie.vote_average > 0 ? movie.vote_average.toFixed(1) : "—"}
                 </p>
-              </Link>
+              </NextLink>
             ))}
           </div>
         </section>
