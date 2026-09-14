@@ -6,6 +6,13 @@ import { buttonVariants } from "@heroui/styles";
 import { getTrending, getGenres, BACKDROP_BASE } from "@/lib/tmdb";
 import MovieCard from "@/components/movie-card";
 import SiteNavbar from "@/components/navbar/site-navbar";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Movie Critique",
+  description: "Roast a Movie, or Praise it! Discover the best movies and TV shows, read reviews, and share your own opinions with our community of movie lovers.",
+};
+
 
 export default async function Home() {
   const [trendingData, genresData] = await Promise.all([

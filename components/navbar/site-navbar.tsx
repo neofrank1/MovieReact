@@ -4,6 +4,7 @@ import { useState } from "react";
 import NextLink from "next/link";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { usePathname } from "next/navigation";
+import ThemeSwitch from "../theme-swtich";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -64,6 +65,7 @@ export default function SiteNavbar() {
           <NextLink href="/profile">
             <div className="w-8 h-8 rounded-full bg-content2 border border-divider" />
           </NextLink>
+          <ThemeSwitch />
         </div>
       </div>
     </nav>
