@@ -1,88 +1,86 @@
-'use client';
+"use client";
+
 import { useState } from "react";
-import { Input, Label } from "@heroui/react";
-import { Separator } from '@heroui/react';
-import { Button } from "@heroui/react";
+import { Button, Input, Label, Separator } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function AuthForm({formType} : {formType: number}) {
+export default function AuthForm({ formType }: { formType: number }) {
+  const isSignUp = formType === 1;
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
 
-    const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Form submitted:", { email, password, name });
-        if (formType === 1) {
-            const result = await authClient.signUp.email({ email, password, name });
-            if (result.data?.token) {
-                console.log("Sign Up successful:", result);
-                router.push("/");
-            } else {
-                console.log("Sign Up failed");
-            }
-        } else {
-            const result = await authClient.signIn.email({ email, password });
-            if (result.data?.token) {
-                console.log("Login successful:", result);
-                router.push("/");
-            } else {
-                console.log("Login failed");
-            }
-    }
-    };
+    const result = isSignUp
+      ? await authClient.signUp.email({ email, password, name })
+      : await authClient.signIn.email({ email, password });
 
-    return (
-    <> 
+    if (result.data?.token) router.push("/");
+  };
+
+  return (
     <form onSubmit={handleSubmit}>
-       {formType === 1 ? ( // Sign Up form
-         <>
-           <div className="text-center mb-5 uppercase text-2xl font-bold ">Sign Up</div>
-           <Separator className="my-4" />
-           <div className="flex w-80 flex-col gap-4">
-               <div className="flex flex-col gap-1">
-                   <Label htmlFor="input-type-name">Name</Label>
-                   <Input aria-label="Name" placeholder="Enter your name" id="input-type-name" value={name} onChange={(e) => setName(e.target.value)}/>
-               </div>
-               <div className="flex flex-col gap-1">
-                   <Label htmlFor="input-type-email">Email</Label>
-                   <Input id="input-type-email" placeholder="example@example.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-               </div>
-               <div className="flex flex-col gap-1">
-                   <Label htmlFor="input-type-password">Password</Label>
-                   <Input id="input-type-password" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-               </div>
-           </div>
-           <Button className="mt-4 w-80" type="submit" >Sign Up</Button>
-           <div className="mt-4 text-center text-sm text-gray-600">
-                Already have an account? <Link href="/login" className="text-blue-500 hover:underline">Login</Link>
-           </div>
-         </>
-       ) : ( // Login form
-         <>
-           <div className="text-center mb-5 uppercase text-2xl font-bold ">Login</div>
-                    <Separator className="my-4" />
-            <div className="flex w-80 flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                    <Label htmlFor="input-type-email">Email</Label>
-                    <Input id="input-type-email" placeholder="example@example.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                </div>
-                <div className="flex flex-col gap-1">
-                    <Label htmlFor="input-type-password">Password</Label>
-                    <Input id="input-type-password" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                </div>
-            </div>
-            <Button className="mt-4 w-80" type="submit" >Login</Button>
-            <div className="mt-4 text-center text-sm text-gray-600">
-                Don't have an account? <Link href="/signup" className="text-blue-500 hover:underline">Sign Up</Link>
-            </div>
-         </>
-       )}
+      <div className="text-center">
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary">MovieCritique</p>
+        <h1 className="mt-2 text-2xl font-bold text-foreground">
+          {isSignUp ? "Create your account" : "Welcome back"}
+        </h1>
+        <p className="mt-2 text-sm text-foreground-500">
+          {isSignUp ? "Join the conversation about every movie." : "Sign in to continue your movie journey."}
+        </p>
+      </div>
+
+      <Separator className="my-6" />
+
+      <div className="flex w-full flex-col gap-4">
+        {isSignUp && (
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="input-type-name">Name</Label>
+            <Input
+              id="input-type-name"
+              aria-label="Name"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+          </div>
+        )}
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="input-type-email">Email</Label>
+          <Input
+            id="input-type-email"
+            placeholder="example@example.com"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="input-type-password">Password</Label>
+          <Input
+            id="input-type-password"
+            placeholder="Enter your password"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        </div>
+      </div>
+
+      <Button className="mt-6 w-full" type="submit">
+        {isSignUp ? "Create account" : "Login"}
+      </Button>
+      <p className="mt-5 text-center text-sm text-foreground-500">
+        {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
+        <Link href={isSignUp ? "/login" : "/signup"} className="font-medium text-primary hover:underline">
+          {isSignUp ? "Login" : "Sign up"}
+        </Link>
+      </p>
     </form>
-    </>
-    )
+  );
 }
