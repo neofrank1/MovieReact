@@ -3,6 +3,13 @@ import { discoverMovies, getGenres } from "@/lib/tmdb";
 import MovieCard from "@/components/movie-card";
 import SiteNavbar from "@/components/navbar/site-navbar";
 import NextLink from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Browse Movies",
+  description:
+    "Discover a wide range of movies across various genres. Browse through our collection and find your next favorite film.",
+};
 
 export default async function BrowsePage({
   searchParams,

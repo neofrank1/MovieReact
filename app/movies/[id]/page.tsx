@@ -38,7 +38,7 @@ export default async function MovieDetailsPage({ params }: Props) {
   const param = await params;
   const movie = await getMovie(param.id);
   const director = movie.credits?.crew?.find((c: any) => c.job === "Director");
-  const cast = movie.credits?.cast?.slice(0, 3) ?? [];
+  const cast = movie.credits?.cast?.slice(0, 20) ?? [];
   const trailer = movie.videos?.results?.find(
     (video: { site?: string; type?: string; key?: string }) =>
       video.site === "YouTube" && video.type === "Trailer"
