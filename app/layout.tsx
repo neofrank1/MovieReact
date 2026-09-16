@@ -1,8 +1,20 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const themeInitializationScript = `
+  try {
+    const theme = localStorage.getItem("theme");
+    const resolvedTheme = theme === "dark" || theme === "light" ? theme : "light";
+    const root = document.documentElement;
+    root.dataset.theme = resolvedTheme;
+    root.classList.toggle("dark", resolvedTheme === "dark");
+  } catch {
+    document.documentElement.dataset.theme = "light";
+  }
+`;
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,9 +26,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${inter.variable} h-full antialiased`}
-      data-theme="dark"
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-background">{children}</body>
+      <body className="min-h-full flex flex-col bg-background">
+        <Script id="theme-initialization" strategy="beforeInteractive">
+          {themeInitializationScript}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }

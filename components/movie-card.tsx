@@ -7,8 +7,8 @@ import { IMAGE_BASE } from "@/lib/tmdb";
 export default function MovieCard({ movie }: { movie: any }) {
   return (
     <NextLink href={`/movies/${movie.id}`} className="block group">
-      <div className="relative aspect-[2/3] bg-content2 border border-divider rounded-medium overflow-hidden group-hover:border-primary/50 transition-colors">
-        {movie.poster_path && (
+      <div className="relative aspect-[2/3] w-full bg-content2 border border-divider rounded-medium overflow-hidden group-hover:border-primary/50 transition-colors">
+        {movie.poster_path ? (
           <Image
             src={`${IMAGE_BASE}${movie.poster_path}`}
             alt={movie.title}
@@ -16,6 +16,10 @@ export default function MovieCard({ movie }: { movie: any }) {
             sizes="(max-width: 640px) 50vw, 20vw"
             className="object-cover"
           />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-foreground-500 text-xs px-2 text-center">
+            No poster available
+          </div>
         )}
       </div>
       <p className="text-sm font-medium mt-2 line-clamp-1 text-foreground">
