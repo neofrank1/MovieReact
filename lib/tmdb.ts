@@ -19,3 +19,4 @@ export const discoverMovies = (genreId?: string) => tmdbFetch(`/discover/movie${
 export const getGenres = () => tmdbFetch("/genre/movie/list");
 export const getTopRatedTV = () => tmdbFetch("/tv/top_rated");
 export const getPopularTV = () => tmdbFetch("/tv/popular");
+export const discoverTV = (genreId?: string) => tmdbFetch(`/discover/tv${genreId ? `?with_genres=${genreId}` : ""}`);
