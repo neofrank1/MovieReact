@@ -1,5 +1,14 @@
 // app/profile/page.tsx
 import SiteNavbar from "@/components/navbar/site-navbar";
+import { auth } from "@/lib/auth";
+import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Profile - Movie Critique",
+  description: "View and manage your profile, reviews, and watchlist.",
+};
 
 const user = {
   name: "Neo Frank Uy",
@@ -14,7 +23,13 @@ const myReviews = [
   { movie: "The Batman", author: "Mark Santos" },
 ];
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) redirect("/");
+
   return (
     <>
       <SiteNavbar />

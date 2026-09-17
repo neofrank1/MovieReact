@@ -1,10 +1,12 @@
 // app/page.tsx
 import NextLink from "next/link";
-import { getTrending, getGenres, getTopRated } from "@/lib/tmdb";
+import { getTrending, getGenres, getTopRatedMovie, getTopRatedTV, getPopularTV } from "@/lib/tmdb";
 import MovieCard from "@/components/movie-card";
+import TVCard from "@/components/tv-card";
 import SiteNavbar from "@/components/navbar/site-navbar";
 import HeroCarousel from "@/components/hero-carousel";
-import TopRatedList from "@/components/top-rated-list";
+import TopRatedList from "@/components/top-rated-movie-list";
+import TopRatedTVList from "@/components/top-rated-tv-list";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,15 +16,19 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const [trendingData, genresData, topRatedData] = await Promise.all([
+  const [trendingData, genresData, topRatedData, topRatedTVData, popularTVData] = await Promise.all([
     getTrending(),
     getGenres(),
-    getTopRated(),
+    getTopRatedMovie(),
+    getTopRatedTV(),
+    getPopularTV(),
   ]);
 
   const trending = trendingData.results ?? [];
   const genres = genresData.genres ?? [];
   const topRated = (topRatedData.results ?? []).slice(0, 5);
+  const topRatedTV = (topRatedTVData.results ?? []).slice(0, 5);
+  const popular = popularTVData.results ?? [];
 
   // Map genre IDs → names for the hero badges
   const genreMap: Record<number, string> = Object.fromEntries(
@@ -54,7 +60,28 @@ export default async function Home() {
               ))}
             </div>
           </section>
+
+          <section className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold flex items-center gap-2">
+                🔥 Popular TV Shows
+              </h2>
+              <NextLink
+                href="/movies"
+                className="text-xs text-primary hover:underline"
+              >
+                View all →
+              </NextLink>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+              {popular.slice(0, 6).map((popularTV: any) => (
+                <TVCard key={popularTV.id} tv={popularTV} />
+              ))}
+            </div>
+          </section>
         </div>
+
+        
 
         <aside className="flex flex-col gap-8">
           <div>
@@ -73,8 +100,12 @@ export default async function Home() {
           </div>
 
           <div>
-            <h2 className="text-base font-semibold mb-3">Top rated</h2>
+            <h2 className="text-base font-semibold mb-3">Top Rated Movie</h2>
             <TopRatedList movies={topRated} />
+          </div>
+           <div>
+            <h2 className="text-base font-semibold mb-3">Top Rated TV Shows</h2>
+            <TopRatedTVList tv={topRatedTV} />
           </div>
         </aside>
       </main>

@@ -12,10 +12,10 @@ async function tmdbFetch(path: string) {
     return res.json();
 }
 
-export const getTopRated = () => tmdbFetch("/movie/top_rated");
+export const getTopRatedMovie = () => tmdbFetch("/movie/top_rated");
 export const getTrending = () => tmdbFetch("/trending/movie/week");
-export const getMovie = (id: string) =>
-tmdbFetch(`/movie/${id}?append_to_response=credits,similar,videos`);
-export const discoverMovies = (genreId?: string) =>
-    tmdbFetch(`/discover/movie${genreId ? `?with_genres=${genreId}` : ""}`);
+export const getMovie = (id: string) => tmdbFetch(`/movie/${id}?append_to_response=credits,similar,videos`);
+export const discoverMovies = (genreId?: string) => tmdbFetch(`/discover/movie${genreId ? `?with_genres=${genreId}` : ""}`);
 export const getGenres = () => tmdbFetch("/genre/movie/list");
+export const getTopRatedTV = () => tmdbFetch("/tv/top_rated");
+export const getPopularTV = () => tmdbFetch("/tv/popular");

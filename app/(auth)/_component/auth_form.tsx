@@ -5,6 +5,7 @@ import { Button, Input, Label, Separator } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, UserRound } from "lucide-react";
 
 export default function AuthForm({ formType }: { formType: number }) {
   const isSignUp = formType === 1;
@@ -12,6 +13,7 @@ export default function AuthForm({ formType }: { formType: number }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -26,11 +28,11 @@ export default function AuthForm({ formType }: { formType: number }) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="text-center">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary">MovieCritique</p>
-        <h1 className="mt-2 text-2xl font-bold text-foreground">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">MovieCritique</p>
+        <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">
           {isSignUp ? "Create your account" : "Welcome back"}
         </h1>
-        <p className="mt-2 text-sm text-foreground-500">
+        <p className="mt-3 text-sm leading-6 text-foreground-500">
           {isSignUp ? "Join the conversation about every movie." : "Sign in to continue your movie journey."}
         </p>
       </div>
@@ -65,17 +67,17 @@ export default function AuthForm({ formType }: { formType: number }) {
           <Input
             id="input-type-password"
             placeholder="Enter your password"
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
         </div>
       </div>
 
-      <Button className="mt-6 w-full" type="submit">
+      <Button className="mt-7 h-11 w-full font-semibold" type="submit">
         {isSignUp ? "Create account" : "Login"}
       </Button>
-      <p className="mt-5 text-center text-sm text-foreground-500">
+      <p className="mt-6 text-center text-sm text-foreground-500">
         {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
         <Link href={isSignUp ? "/login" : "/signup"} className="font-medium text-primary hover:underline">
           {isSignUp ? "Login" : "Sign up"}

@@ -1,4 +1,5 @@
 // components/top-rated-list.tsx
+'use client'
 import Image from "next/image";
 import NextLink from "next/link";
 import { Star } from "lucide-react";

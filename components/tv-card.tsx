@@ -4,14 +4,14 @@ import NextLink from "next/link";
 import { Star } from "lucide-react";
 import { IMAGE_BASE } from "@/lib/tmdb";
 
-export default function MovieCard({ movie }: { movie: any }) {
+export default function TVCard({ tv }: { tv: any }) {
   return (
-    <NextLink href={`/movies/${movie.id}`} className="block group">
+    <NextLink href={`/tv/${tv.id}`} className="block group">
       <div className="relative aspect-[2/3] w-full bg-content2 border border-divider rounded-medium overflow-hidden group-hover:border-primary/50 transition-colors">
-        {movie.poster_path ? (
+        {tv.poster_path ? (
           <Image
-            src={`${IMAGE_BASE}${movie.poster_path}`}
-            alt={movie.title ? movie.title : movie.name}
+            src={`${IMAGE_BASE}${tv.poster_path}`}
+            alt={ tv.name}
             fill
             sizes="(max-width: 640px) 50vw, 20vw"
             className="object-cover"
@@ -23,11 +23,11 @@ export default function MovieCard({ movie }: { movie: any }) {
         )}
       </div>
       <p className="text-sm font-medium mt-2 line-clamp-1 text-foreground">
-        {movie.title ? movie.title : movie.name}
+        {tv.name}
       </p>
       <p className="text-xs text-foreground-500 mt-0.5 flex items-center gap-1">
         <Star size={11} className="text-warning" fill="currentColor" />
-        {movie.vote_average > 0 ? movie.vote_average.toFixed(1) : "—"}
+        {tv.vote_average > 0 ? tv.vote_average.toFixed(1) : "—"}
       </p>
     </NextLink>
   );
