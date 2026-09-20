@@ -4,9 +4,9 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: d@tabase_123
-      POSTGRES_DB: moviedb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
@@ -25,7 +25,7 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      DATABASE_URL: "postgresql://admin:d%40tabase_123@db:5432/moviedb"
+      DATABASE_URL: ${DATABASE_URL}
     command: sh -c "npm ci --include=optional && npm run dev -- --hostname 0.0.0.0"
     depends_on:
       db:
