@@ -31,30 +31,34 @@ export default async function BrowsePage({ searchParams }: Props) {
       <main className="mx-auto max-w-6xl px-6 py-8">
         <h1 className="text-lg font-semibold mb-4">Browse movies</h1>
 
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-8">
           <NextLink
             href="/movies"
-            className={`text-xs px-3 py-1.5 rounded-medium whitespace-nowrap border ${
-              !genre
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-content2 border-divider text-foreground-400"
+            className={`text-sm px-4 py-2 rounded-full border transition-colors ${
+              !searchParams.genre
+                ? "bg-foreground text-background border-foreground font-medium"
+                : "border-divider text-foreground-500 hover:border-foreground-400 hover:text-foreground"
             }`}
           >
-            All
+            All genres
           </NextLink>
-          {genres.map((g: any) => (
-            <NextLink
-              key={g.id}
-              href={`/movies?genre=${g.id}`}
-              className={`text-xs px-3 py-1.5 rounded-medium whitespace-nowrap border ${
-                String(g.id) === genre
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-content2 border-divider text-foreground-400"
-              }`}
-            >
-              {g.name}
-            </NextLink>
-          ))}
+          {genres.map((g: any, i: number) => {
+            const active = String(g.id) === searchParams.genre;
+            return (
+              <NextLink
+                key={g.id}
+                href={`/movies?genre=${g.id}`}
+                style={{ transform: i % 3 === 1 ? "translateY(3px)" : undefined }}
+                className={`text-sm px-4 py-2 rounded-full border transition-colors ${
+                  active
+                    ? "bg-foreground text-background border-foreground font-medium"
+                    : "border-divider text-foreground-500 hover:border-foreground-400 hover:text-foreground"
+                }`}
+              >
+                {g.name}
+              </NextLink>
+            );
+          })}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-5">

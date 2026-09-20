@@ -8,6 +8,7 @@ import HeroCarousel from "@/components/hero-carousel";
 import TopRatedList from "@/components/top-rated-movie-list";
 import TopRatedTVList from "@/components/top-rated-tv-list";
 import type { Metadata } from "next";
+import Footer from "@/components/footer/footer";
 
 export const metadata: Metadata = {
   title: "Movie Critique",
@@ -67,7 +68,7 @@ export default async function Home() {
                 🔥 Popular TV Shows
               </h2>
               <NextLink
-                href="/movies"
+                href="/tv"
                 className="text-xs text-primary hover:underline"
               >
                 View all →
@@ -109,6 +110,7 @@ export default async function Home() {
           </div>
         </aside>
       </main>
+      <Footer />
     </>
   );
 }
