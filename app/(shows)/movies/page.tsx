@@ -4,6 +4,7 @@ import MovieCard from "@/components/movie-card";
 import SiteNavbar from "@/components/navbar/site-navbar";
 import NextLink from "next/link";
 import type { Metadata } from "next";
+import PaginationComponent from "@/components/pagination";
 
 export const metadata: Metadata = {
   title: "Browse Movies",
@@ -65,6 +66,10 @@ export default async function BrowsePage({ searchParams }: Props) {
           {movies.map((movie: any) => (
             <MovieCard key={movie.id} movie={movie} />
           ))}
+        </div>
+
+        <div className="flex justify-center mt-8">
+            <PaginationComponent/>
         </div>
       </main>
     </>
