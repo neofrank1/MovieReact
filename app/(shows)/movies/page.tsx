@@ -13,18 +13,20 @@ export const metadata: Metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ genre?: string }>;
+  searchParams: Promise<{ genre?: string; page?: string }>;
 };
 
 
 export default async function BrowsePage({ searchParams }: Props) {
   const { genre } = await searchParams;
+  const currentPage = Number((await searchParams).page) || 1;
   const [moviesData, genresData] = await Promise.all([
-    discoverMovies(genre),
+    discoverMovies(genre, currentPage),
     getGenres(),
   ]);
   const movies = moviesData.results ?? [];
   const genres = genresData.genres ?? [];
+  const totalPages = moviesData.total_pages ?? 1;
 
   return (
     <>
@@ -69,7 +71,7 @@ export default async function BrowsePage({ searchParams }: Props) {
         </div>
 
         <div className="flex justify-center mt-8">
-            <PaginationComponent/>
+            <PaginationComponent totalPages={totalPages} currentPage={currentPage}/>
         </div>
       </main>
     </>

@@ -1,40 +1,70 @@
 "use client";
 
-import {Pagination} from "@heroui/react";
-import {Icon} from "@iconify/react";
-import {useState} from "react";
+import { Pagination } from "@heroui/react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function PaginationComponent() {
-  const [page, setPage] = useState(1);
-  const totalPages = 3;
+export default function PaginationComponent({ totalPages, currentPage }: { totalPages: number } & { currentPage: number }) {
+  const [page, setPage] = useState(currentPage ? currentPage : 1);
+  const router = useRouter();
+
+  const buildHref = (page: number) => {
+    setPage(page);
+    const params = new URLSearchParams();
+    params.set("page", String(page));
+    router.push(`/movies?${params.toString()}`);
+  };
+
+
+  const getPageNumbers = () => {
+    const pages: (number | "ellipsis")[] = [];
+    pages.push(1);
+    if (page > 3) {
+      pages.push("ellipsis");
+    }
+    const start = Math.max(2, page - 1);
+    const end = Math.min(totalPages - 1, page + 1);
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    if (page < totalPages - 2) {
+      pages.push("ellipsis");
+    }
+    pages.push(totalPages);
+    return pages;
+  };
 
   return (
-    <Pagination className="justify-center">
-      <Pagination.Content>
-        <Pagination.Item>
-          <Pagination.Previous isDisabled={page === 1} onPress={() => setPage((p) => p - 1)}>
-            <Pagination.PreviousIcon>
-              <Icon icon="gravity-ui:arrow-left" />
-            </Pagination.PreviousIcon>
-            <span>Back</span>
-          </Pagination.Previous>
-        </Pagination.Item>
-        {Array.from({length: totalPages}, (_, i) => i + 1).map((p) => (
-          <Pagination.Item key={p}>
-            <Pagination.Link isActive={p === page} onPress={() => setPage(p)}>
-              {p}
-            </Pagination.Link>
+    <div className="w-full max-w-2xs overflow-x-auto sm:max-w-full">
+      <Pagination className="justify-center">
+        <Pagination.Content>
+          <Pagination.Item>
+            <Pagination.Previous isDisabled={page === 1} onPress={() => buildHref(page - 1)}>
+              <Pagination.PreviousIcon />
+              <span>Previous</span>
+            </Pagination.Previous>
           </Pagination.Item>
-        ))}
-        <Pagination.Item>
-          <Pagination.Next isDisabled={page === totalPages} onPress={() => setPage((p) => p + 1)}>
-            <span>Forward</span>
-            <Pagination.NextIcon>
-              <Icon icon="gravity-ui:arrow-right" />
-            </Pagination.NextIcon>
-          </Pagination.Next>
-        </Pagination.Item>
-      </Pagination.Content>
-    </Pagination>
+          {getPageNumbers().map((p, i) =>
+            p === "ellipsis" ? (
+              <Pagination.Item key={`ellipsis-${i}`}>
+                <Pagination.Ellipsis />
+              </Pagination.Item>
+            ) : (
+              <Pagination.Item key={p}>
+                <Pagination.Link isActive={p === page} onPress={() => buildHref(p)}>
+                  {p}
+                </Pagination.Link>
+              </Pagination.Item>
+            ),
+          )}
+          <Pagination.Item>
+            <Pagination.Next isDisabled={page === totalPages} onPress={() => buildHref(page + 1)}>
+              <span>Next</span>
+              <Pagination.NextIcon />
+            </Pagination.Next>
+          </Pagination.Item>
+        </Pagination.Content>
+      </Pagination>
+    </div>
   );
 }
