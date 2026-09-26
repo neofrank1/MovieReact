@@ -38,7 +38,7 @@ export default async function BrowsePage({ searchParams }: Props) {
           <NextLink
             href="/movies"
             className={`text-sm px-4 py-2 rounded-full border transition-colors ${
-              !searchParams.genre
+              !genre
                 ? "bg-foreground text-background border-foreground font-medium"
                 : "border-divider text-foreground-500 hover:border-foreground-400 hover:text-foreground"
             }`}
@@ -46,7 +46,7 @@ export default async function BrowsePage({ searchParams }: Props) {
             All genres
           </NextLink>
           {genres.map((g: any, i: number) => {
-            const active = String(g.id) === searchParams.genre;
+            const active = String(g.id) === genre;
             return (
               <NextLink
                 key={g.id}
@@ -71,7 +71,7 @@ export default async function BrowsePage({ searchParams }: Props) {
         </div>
 
         <div className="flex justify-center mt-8">
-            <PaginationComponent totalPages={totalPages} currentPage={currentPage}/>
+            <PaginationComponent totalPages={totalPages} currentPage={currentPage} genre={genre} type={1}/>
         </div>
       </main>
     </>

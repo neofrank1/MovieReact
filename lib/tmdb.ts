@@ -16,7 +16,7 @@ export const getTopRatedMovie = () => tmdbFetch("/movie/top_rated");
 export const getTrending = () => tmdbFetch("/trending/movie/week");
 export const getMovie = (id: string) => tmdbFetch(`/movie/${id}?append_to_response=credits,similar,videos`);
 export const getTV = (id: string) => tmdbFetch(`/tv/${id}?append_to_response=credits,similar,videos`);
-export const discoverMovies = (genreId?: string, page = 1) => tmdbFetch(`/discover/movie?page=${page}${genreId ? `?with_genres=${genreId}` : ""}`);
+export const discoverMovies = (genreId?: string, page = 1) => tmdbFetch(`/discover/movie?page=${page}${genreId ? `&with_genres=${genreId}` : ""}`);
 export const getGenres = () => tmdbFetch("/genre/movie/list");
 export const getTVGenres = () => tmdbFetch("/genre/tv/list");
 export const getTopRatedTV = () => tmdbFetch("/tv/top_rated");

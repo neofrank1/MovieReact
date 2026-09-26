@@ -35,9 +35,9 @@ const genres = genresData.genres ?? [];
 
         <div className="flex flex-wrap gap-2 mb-8">
           <NextLink
-            href="/movies"
+            href="/tv"
             className={`text-sm px-4 py-2 rounded-full border transition-colors ${
-              !searchParams.genre
+              !genre
                 ? "bg-foreground text-background border-foreground font-medium"
                 : "border-divider text-foreground-500 hover:border-foreground-400 hover:text-foreground"
             }`}
@@ -45,7 +45,7 @@ const genres = genresData.genres ?? [];
             All genres
           </NextLink>
           {genres.map((g: any, i: number) => {
-            const active = String(g.id) === searchParams.genre;
+            const active = String(g.id) === genre;
             return (
               <NextLink
                 key={g.id}

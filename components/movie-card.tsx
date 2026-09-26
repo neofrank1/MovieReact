@@ -12,6 +12,7 @@ export default function MovieCard({ movie }: { movie: any }) {
           <Image
             src={`${IMAGE_BASE}${movie.poster_path}`}
             alt={movie.title ? movie.title : movie.name}
+            loading="eager"
             fill
             sizes="(max-width: 640px) 50vw, 20vw"
             className="object-cover"
