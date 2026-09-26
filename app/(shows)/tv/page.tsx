@@ -4,9 +4,10 @@ import TVCard from "@/components/tv-card";
 import SiteNavbar from "@/components/navbar/site-navbar";
 import NextLink from "next/link";
 import type { Metadata } from "next";
+import PaginationComponent from "@/components/pagination";
 
 type Props = {
-  searchParams: Promise<{ genre?: string }>;
+  searchParams: Promise<{ genre?: string; page?: string }>;
 };
 
 
@@ -17,15 +18,17 @@ export const metadata: Metadata = {
 };
 
 export default async function BrowsePage({ searchParams }: Props) {
-
+const currentPage = Number((await searchParams).page) || 1;
 const { genre } = await searchParams;
 const [tvData, genresData] = await Promise.all([
-    discoverTV(genre),
+    discoverTV(genre, currentPage),
     getTVGenres(),
 ]);
 
 const tv = tvData.results ?? [];
 const genres = genresData.genres ?? [];
+const totalPages = tvData.total_pages ?? 1;
+console.log(tvData)
 
   return (
     <>
@@ -68,6 +71,10 @@ const genres = genresData.genres ?? [];
             <TVCard key={tvData.id} tv={tvData} />
           ))}
         </div>
+
+           <div className="flex justify-center mt-8">
+              <PaginationComponent totalPages={totalPages} currentPage={currentPage} genre={genre} type={2}/>
+          </div>
       </main>
     </>
   );

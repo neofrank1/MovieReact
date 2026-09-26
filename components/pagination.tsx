@@ -14,6 +14,7 @@ export default function PaginationComponent({ totalPages, currentPage, genre, ty
     params.set("page", String(page));
     params.set("genre", String(genre || ""));
     if (type === 1) router.push(`/movies?${params.toString()}`);
+    else if (type === 2) router.push(`/tv?${params.toString()}`);
   };
 
 
