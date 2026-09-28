@@ -11,7 +11,7 @@ export default function TopRatedTVList({ tv }: { tv: any[] }) {
       {tv.map((tvData, i) => (
         <NextLink
           key={tvData.id}
-          href={`/shows/${tvData.id}`}
+          href={`/tv/${tvData.id}`}
           className="flex items-center gap-3 group"
         >
           <span className="text-sm text-foreground-500 w-4 shrink-0">{i + 1}</span>

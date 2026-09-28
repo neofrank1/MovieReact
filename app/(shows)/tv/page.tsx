@@ -28,7 +28,6 @@ const [tvData, genresData] = await Promise.all([
 const tv = tvData.results ?? [];
 const genres = genresData.genres ?? [];
 const totalPages = tvData.total_pages ?? 1;
-console.log(tvData)
 
   return (
     <>

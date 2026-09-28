@@ -37,7 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function TVDetailsPage({ params }: Props) {
   const param = await params;
   const data = await getTV(param.id);
-  console.log("TV Data:", data); // Debugging line to check the fetched data
   const director = data.credits?.crew?.find((c: any) => c.job === "Director");
   const cast = data.credits?.cast?.slice(0, 20) ?? [];
   const trailer = data.videos?.results?.find(
@@ -113,7 +112,7 @@ export default async function TVDetailsPage({ params }: Props) {
 
       {data.similar?.results?.length > 0 && (
         <section className="mx-auto w-full max-w-6xl px-6 py-10">
-          <h2 className="text-sm font-medium mb-3">Similar datas</h2>
+          <h2 className="text-sm font-medium mb-3">Similar TV Shows</h2>
           <div className="grid w-full grid-cols-2 gap-5 sm:grid-cols-[repeat(5,minmax(0,1fr))]">
             {data.similar.results.slice(0, 5).map((m: any) => (
               <TVCard key={m.id} tv={m} />

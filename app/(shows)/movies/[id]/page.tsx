@@ -112,7 +112,7 @@ export default async function MovieDetailsPage({ params }: Props) {
 
       {movie.similar?.results?.length > 0 && (
         <section className="mx-auto w-full max-w-6xl px-6 py-10">
-          <h2 className="text-sm font-medium mb-3">Similar movies</h2>
+          <h2 className="text-sm font-medium mb-3">Similar Movies</h2>
           <div className="grid w-full grid-cols-2 gap-5 sm:grid-cols-[repeat(5,minmax(0,1fr))]">
             {movie.similar.results.slice(0, 5).map((m: any) => (
               <MovieCard key={m.id} movie={m} />

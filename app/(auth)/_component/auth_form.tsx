@@ -6,6 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, UserRound } from "lucide-react";
+import { Alert } from "@heroui/react";
 
 export default function AuthForm({ formType }: { formType: number }) {
   const isSignUp = formType === 1;
@@ -14,14 +15,22 @@ export default function AuthForm({ formType }: { formType: number }) {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [last_name, setLastName] = useState("");
+  const [first_name, setFirstName] = useState("");
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const result = isSignUp
-      ? await authClient.signUp.email({ email, password, name })
+      ? await authClient.signUp.email({ email, password, name, first_name, last_name})
       : await authClient.signIn.email({ email, password });
-
+    
+    if (result.error) {
+      setError(result.error.message);
+      return;
+    }
+      
     if (result.data?.token) router.push("/");
   };
 
@@ -40,17 +49,51 @@ export default function AuthForm({ formType }: { formType: number }) {
       <Separator className="my-6" />
 
       <div className="flex w-full flex-col gap-4">
+        {error && (
+          <Alert status="danger">
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>Error</Alert.Title>
+              <Alert.Description>
+                {error}
+              </Alert.Description>
+            </Alert.Content>
+          </Alert>
+        )}
+
         {isSignUp && (
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="input-type-name">Name</Label>
-            <Input
-              id="input-type-name"
-              aria-label="Name"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-            />
-          </div>
+          <>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="input-type-name">Nickname</Label>
+                <Input
+                  id="input-type-name"
+                  aria-label="NickName"
+                  placeholder="Enter your nickname"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="input-type-lastname">Last Name</Label>
+                <Input
+                  id="input-type-lastname"
+                  aria-label="LastName"
+                  placeholder="Enter your Last Name"
+                  value={last_name}
+                  onChange={(event) => setLastName(event.target.value)}
+                />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="input-type-firstname">First Name</Label>
+                <Input
+                  id="input-type-firstname"
+                  aria-label="FirstName"
+                  placeholder="Enter your First Name"
+                  value={first_name}
+                  onChange={(event) => setFirstName(event.target.value)}
+                />
+            </div>
+          </>
         )}
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="input-type-email">Email</Label>
