@@ -37,7 +37,7 @@ export default async function ProfilePage() {
       <SiteNavbar />
       <main className="mx-auto w-full max-w-5xl px-6 py-8 sm:py-12">
         <section className="overflow-hidden rounded-large border border-divider bg-content2">
-          <div className="h-28 bg-gradient-to-r from-primary/35 via-primary/15 to-transparent sm:h-36" />
+          <div className="h-28 bg-linear-to-r from-primary/35 via-primary/15 to-transparent sm:h-36" />
           <div className="px-5 pb-6 sm:px-8 sm:pb-8">
             <div className="-mt-12 flex flex-col gap-4 sm:-mt-14 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex items-end gap-4">
