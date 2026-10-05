@@ -43,7 +43,17 @@ export type Verification = Prisma.VerificationModel
  */
 export type Movies = Prisma.MoviesModel
 /**
+ * Model TVShow
+ * 
+ */
+export type TVShow = Prisma.TVShowModel
+/**
  * Model Reviews
  * 
  */
 export type Reviews = Prisma.ReviewsModel
+/**
+ * Model UserDetails
+ * 
+ */
+export type UserDetails = Prisma.UserDetailsModel

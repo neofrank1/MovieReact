@@ -12,7 +12,7 @@ const navLinks = [
   { label: "Home", href: "/" },
   { label: "Movies", href: "/movies" },
   { label: "TV Shows", href: "/tv" },
-  { label: "Reviews", href: "/reviews" },
+  // { label: "Reviews", href: "/reviews" },
 ];
 
 export default function SiteNavbar() {

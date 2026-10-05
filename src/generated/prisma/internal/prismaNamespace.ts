@@ -402,7 +402,9 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Movies: 'Movies',
-  Reviews: 'Reviews'
+  TVShow: 'TVShow',
+  Reviews: 'Reviews',
+  UserDetails: 'UserDetails'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -418,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "movies" | "reviews"
+    modelProps: "user" | "session" | "account" | "verification" | "movies" | "tVShow" | "reviews" | "userDetails"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -792,6 +794,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TVShow: {
+      payload: Prisma.$TVShowPayload<ExtArgs>
+      fields: Prisma.TVShowFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TVShowFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TVShowFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>
+        }
+        findFirst: {
+          args: Prisma.TVShowFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TVShowFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>
+        }
+        findMany: {
+          args: Prisma.TVShowFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>[]
+        }
+        create: {
+          args: Prisma.TVShowCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>
+        }
+        createMany: {
+          args: Prisma.TVShowCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TVShowCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>[]
+        }
+        delete: {
+          args: Prisma.TVShowDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>
+        }
+        update: {
+          args: Prisma.TVShowUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>
+        }
+        deleteMany: {
+          args: Prisma.TVShowDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TVShowUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TVShowUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>[]
+        }
+        upsert: {
+          args: Prisma.TVShowUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TVShowPayload>
+        }
+        aggregate: {
+          args: Prisma.TVShowAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTVShow>
+        }
+        groupBy: {
+          args: Prisma.TVShowGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TVShowGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TVShowCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TVShowCountAggregateOutputType> | number
+        }
+      }
+    }
     Reviews: {
       payload: Prisma.$ReviewsPayload<ExtArgs>
       fields: Prisma.ReviewsFieldRefs
@@ -866,6 +942,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserDetails: {
+      payload: Prisma.$UserDetailsPayload<ExtArgs>
+      fields: Prisma.UserDetailsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserDetailsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserDetailsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>
+        }
+        findFirst: {
+          args: Prisma.UserDetailsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserDetailsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>
+        }
+        findMany: {
+          args: Prisma.UserDetailsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>[]
+        }
+        create: {
+          args: Prisma.UserDetailsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>
+        }
+        createMany: {
+          args: Prisma.UserDetailsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserDetailsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>[]
+        }
+        delete: {
+          args: Prisma.UserDetailsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>
+        }
+        update: {
+          args: Prisma.UserDetailsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserDetailsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserDetailsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserDetailsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserDetailsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserDetailsPayload>
+        }
+        aggregate: {
+          args: Prisma.UserDetailsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserDetails>
+        }
+        groupBy: {
+          args: Prisma.UserDetailsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserDetailsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserDetailsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserDetailsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -908,8 +1058,6 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  first_name: 'first_name',
-  last_name: 'last_name',
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
@@ -976,15 +1124,37 @@ export const MoviesScalarFieldEnum = {
 export type MoviesScalarFieldEnum = (typeof MoviesScalarFieldEnum)[keyof typeof MoviesScalarFieldEnum]
 
 
+export const TVShowScalarFieldEnum = {
+  id: 'id',
+  tv_show_id: 'tv_show_id',
+  tv_title: 'tv_title',
+  poster_path: 'poster_path'
+} as const
+
+export type TVShowScalarFieldEnum = (typeof TVShowScalarFieldEnum)[keyof typeof TVShowScalarFieldEnum]
+
+
 export const ReviewsScalarFieldEnum = {
   id: 'id',
   comment: 'comment',
   rating: 'rating',
   movie_id: 'movie_id',
+  tv_id: 'tv_id',
   user_id: 'user_id'
 } as const
 
 export type ReviewsScalarFieldEnum = (typeof ReviewsScalarFieldEnum)[keyof typeof ReviewsScalarFieldEnum]
+
+
+export const UserDetailsScalarFieldEnum = {
+  id: 'id',
+  first_name: 'first_name',
+  last_name: 'last_name',
+  birthdate: 'birthdate',
+  user_id: 'user_id'
+} as const
+
+export type UserDetailsScalarFieldEnum = (typeof UserDetailsScalarFieldEnum)[keyof typeof UserDetailsScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1235,7 +1405,9 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
   movies?: Prisma.MoviesOmit
+  tVShow?: Prisma.TVShowOmit
   reviews?: Prisma.ReviewsOmit
+  userDetails?: Prisma.UserDetailsOmit
 }
 
 /* Types for Logging */

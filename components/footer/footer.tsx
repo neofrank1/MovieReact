@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { Film, MessageSquareText, Star, Tv } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export default function Footer() {
+  const session = authClient.useSession();
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
@@ -46,7 +48,7 @@ export default function Footer() {
           </ul>
         </div>
 
-        <div>
+        {!session ? (<div>
           <h2 className="text-sm font-semibold text-foreground">Your account</h2>
           <ul className="mt-4 space-y-3 text-sm">
             <li>
@@ -61,6 +63,10 @@ export default function Footer() {
             </li>
           </ul>
         </div>
+        ): (
+          <>
+          </>
+        )}
       </div>
 
       <div className="border-t border-divider">

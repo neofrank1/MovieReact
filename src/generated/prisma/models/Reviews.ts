@@ -41,6 +41,7 @@ export type ReviewsMinAggregateOutputType = {
   comment: string | null
   rating: number | null
   movie_id: string | null
+  tv_id: string | null
   user_id: string | null
 }
 
@@ -49,6 +50,7 @@ export type ReviewsMaxAggregateOutputType = {
   comment: string | null
   rating: number | null
   movie_id: string | null
+  tv_id: string | null
   user_id: string | null
 }
 
@@ -57,6 +59,7 @@ export type ReviewsCountAggregateOutputType = {
   comment: number
   rating: number
   movie_id: number
+  tv_id: number
   user_id: number
   _all: number
 }
@@ -77,6 +80,7 @@ export type ReviewsMinAggregateInputType = {
   comment?: true
   rating?: true
   movie_id?: true
+  tv_id?: true
   user_id?: true
 }
 
@@ -85,6 +89,7 @@ export type ReviewsMaxAggregateInputType = {
   comment?: true
   rating?: true
   movie_id?: true
+  tv_id?: true
   user_id?: true
 }
 
@@ -93,6 +98,7 @@ export type ReviewsCountAggregateInputType = {
   comment?: true
   rating?: true
   movie_id?: true
+  tv_id?: true
   user_id?: true
   _all?: true
 }
@@ -187,7 +193,8 @@ export type ReviewsGroupByOutputType = {
   id: number
   comment: string
   rating: number
-  movie_id: string
+  movie_id: string | null
+  tv_id: string | null
   user_id: string
   _count: ReviewsCountAggregateOutputType | null
   _avg: ReviewsAvgAggregateOutputType | null
@@ -218,9 +225,11 @@ export type ReviewsWhereInput = {
   id?: Prisma.IntFilter<"Reviews"> | number
   comment?: Prisma.StringFilter<"Reviews"> | string
   rating?: Prisma.IntFilter<"Reviews"> | number
-  movie_id?: Prisma.StringFilter<"Reviews"> | string
+  movie_id?: Prisma.StringNullableFilter<"Reviews"> | string | null
+  tv_id?: Prisma.StringNullableFilter<"Reviews"> | string | null
   user_id?: Prisma.StringFilter<"Reviews"> | string
-  movie?: Prisma.XOR<Prisma.MoviesScalarRelationFilter, Prisma.MoviesWhereInput>
+  movie?: Prisma.XOR<Prisma.MoviesNullableScalarRelationFilter, Prisma.MoviesWhereInput> | null
+  tv_show?: Prisma.XOR<Prisma.TVShowNullableScalarRelationFilter, Prisma.TVShowWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
@@ -228,9 +237,11 @@ export type ReviewsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   rating?: Prisma.SortOrder
-  movie_id?: Prisma.SortOrder
+  movie_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  tv_id?: Prisma.SortOrderInput | Prisma.SortOrder
   user_id?: Prisma.SortOrder
   movie?: Prisma.MoviesOrderByWithRelationInput
+  tv_show?: Prisma.TVShowOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -241,9 +252,11 @@ export type ReviewsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ReviewsWhereInput | Prisma.ReviewsWhereInput[]
   comment?: Prisma.StringFilter<"Reviews"> | string
   rating?: Prisma.IntFilter<"Reviews"> | number
-  movie_id?: Prisma.StringFilter<"Reviews"> | string
+  movie_id?: Prisma.StringNullableFilter<"Reviews"> | string | null
+  tv_id?: Prisma.StringNullableFilter<"Reviews"> | string | null
   user_id?: Prisma.StringFilter<"Reviews"> | string
-  movie?: Prisma.XOR<Prisma.MoviesScalarRelationFilter, Prisma.MoviesWhereInput>
+  movie?: Prisma.XOR<Prisma.MoviesNullableScalarRelationFilter, Prisma.MoviesWhereInput> | null
+  tv_show?: Prisma.XOR<Prisma.TVShowNullableScalarRelationFilter, Prisma.TVShowWhereInput> | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
@@ -251,7 +264,8 @@ export type ReviewsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   rating?: Prisma.SortOrder
-  movie_id?: Prisma.SortOrder
+  movie_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  tv_id?: Prisma.SortOrderInput | Prisma.SortOrder
   user_id?: Prisma.SortOrder
   _count?: Prisma.ReviewsCountOrderByAggregateInput
   _avg?: Prisma.ReviewsAvgOrderByAggregateInput
@@ -267,14 +281,16 @@ export type ReviewsScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Reviews"> | number
   comment?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
   rating?: Prisma.IntWithAggregatesFilter<"Reviews"> | number
-  movie_id?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
+  movie_id?: Prisma.StringNullableWithAggregatesFilter<"Reviews"> | string | null
+  tv_id?: Prisma.StringNullableWithAggregatesFilter<"Reviews"> | string | null
   user_id?: Prisma.StringWithAggregatesFilter<"Reviews"> | string
 }
 
 export type ReviewsCreateInput = {
   comment: string
   rating: number
-  movie: Prisma.MoviesCreateNestedOneWithoutReviewsInput
+  movie?: Prisma.MoviesCreateNestedOneWithoutReviewsInput
+  tv_show?: Prisma.TVShowCreateNestedOneWithoutReviewsInput
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
 }
 
@@ -282,14 +298,16 @@ export type ReviewsUncheckedCreateInput = {
   id?: number
   comment: string
   rating: number
-  movie_id: string
+  movie_id?: string | null
+  tv_id?: string | null
   user_id: string
 }
 
 export type ReviewsUpdateInput = {
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
-  movie?: Prisma.MoviesUpdateOneRequiredWithoutReviewsNestedInput
+  movie?: Prisma.MoviesUpdateOneWithoutReviewsNestedInput
+  tv_show?: Prisma.TVShowUpdateOneWithoutReviewsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
 }
 
@@ -297,7 +315,8 @@ export type ReviewsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
-  movie_id?: Prisma.StringFieldUpdateOperationsInput | string
+  movie_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tv_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -305,7 +324,8 @@ export type ReviewsCreateManyInput = {
   id?: number
   comment: string
   rating: number
-  movie_id: string
+  movie_id?: string | null
+  tv_id?: string | null
   user_id: string
 }
 
@@ -318,7 +338,8 @@ export type ReviewsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
-  movie_id?: Prisma.StringFieldUpdateOperationsInput | string
+  movie_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tv_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -337,6 +358,7 @@ export type ReviewsCountOrderByAggregateInput = {
   comment?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   movie_id?: Prisma.SortOrder
+  tv_id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
 }
 
@@ -350,6 +372,7 @@ export type ReviewsMaxOrderByAggregateInput = {
   comment?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   movie_id?: Prisma.SortOrder
+  tv_id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
 }
 
@@ -358,6 +381,7 @@ export type ReviewsMinOrderByAggregateInput = {
   comment?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   movie_id?: Prisma.SortOrder
+  tv_id?: Prisma.SortOrder
   user_id?: Prisma.SortOrder
 }
 
@@ -450,17 +474,61 @@ export type ReviewsUncheckedUpdateManyWithoutMovieNestedInput = {
   deleteMany?: Prisma.ReviewsScalarWhereInput | Prisma.ReviewsScalarWhereInput[]
 }
 
+export type ReviewsCreateNestedManyWithoutTv_showInput = {
+  create?: Prisma.XOR<Prisma.ReviewsCreateWithoutTv_showInput, Prisma.ReviewsUncheckedCreateWithoutTv_showInput> | Prisma.ReviewsCreateWithoutTv_showInput[] | Prisma.ReviewsUncheckedCreateWithoutTv_showInput[]
+  connectOrCreate?: Prisma.ReviewsCreateOrConnectWithoutTv_showInput | Prisma.ReviewsCreateOrConnectWithoutTv_showInput[]
+  createMany?: Prisma.ReviewsCreateManyTv_showInputEnvelope
+  connect?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+}
+
+export type ReviewsUncheckedCreateNestedManyWithoutTv_showInput = {
+  create?: Prisma.XOR<Prisma.ReviewsCreateWithoutTv_showInput, Prisma.ReviewsUncheckedCreateWithoutTv_showInput> | Prisma.ReviewsCreateWithoutTv_showInput[] | Prisma.ReviewsUncheckedCreateWithoutTv_showInput[]
+  connectOrCreate?: Prisma.ReviewsCreateOrConnectWithoutTv_showInput | Prisma.ReviewsCreateOrConnectWithoutTv_showInput[]
+  createMany?: Prisma.ReviewsCreateManyTv_showInputEnvelope
+  connect?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+}
+
+export type ReviewsUpdateManyWithoutTv_showNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewsCreateWithoutTv_showInput, Prisma.ReviewsUncheckedCreateWithoutTv_showInput> | Prisma.ReviewsCreateWithoutTv_showInput[] | Prisma.ReviewsUncheckedCreateWithoutTv_showInput[]
+  connectOrCreate?: Prisma.ReviewsCreateOrConnectWithoutTv_showInput | Prisma.ReviewsCreateOrConnectWithoutTv_showInput[]
+  upsert?: Prisma.ReviewsUpsertWithWhereUniqueWithoutTv_showInput | Prisma.ReviewsUpsertWithWhereUniqueWithoutTv_showInput[]
+  createMany?: Prisma.ReviewsCreateManyTv_showInputEnvelope
+  set?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+  disconnect?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+  delete?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+  connect?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+  update?: Prisma.ReviewsUpdateWithWhereUniqueWithoutTv_showInput | Prisma.ReviewsUpdateWithWhereUniqueWithoutTv_showInput[]
+  updateMany?: Prisma.ReviewsUpdateManyWithWhereWithoutTv_showInput | Prisma.ReviewsUpdateManyWithWhereWithoutTv_showInput[]
+  deleteMany?: Prisma.ReviewsScalarWhereInput | Prisma.ReviewsScalarWhereInput[]
+}
+
+export type ReviewsUncheckedUpdateManyWithoutTv_showNestedInput = {
+  create?: Prisma.XOR<Prisma.ReviewsCreateWithoutTv_showInput, Prisma.ReviewsUncheckedCreateWithoutTv_showInput> | Prisma.ReviewsCreateWithoutTv_showInput[] | Prisma.ReviewsUncheckedCreateWithoutTv_showInput[]
+  connectOrCreate?: Prisma.ReviewsCreateOrConnectWithoutTv_showInput | Prisma.ReviewsCreateOrConnectWithoutTv_showInput[]
+  upsert?: Prisma.ReviewsUpsertWithWhereUniqueWithoutTv_showInput | Prisma.ReviewsUpsertWithWhereUniqueWithoutTv_showInput[]
+  createMany?: Prisma.ReviewsCreateManyTv_showInputEnvelope
+  set?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+  disconnect?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+  delete?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+  connect?: Prisma.ReviewsWhereUniqueInput | Prisma.ReviewsWhereUniqueInput[]
+  update?: Prisma.ReviewsUpdateWithWhereUniqueWithoutTv_showInput | Prisma.ReviewsUpdateWithWhereUniqueWithoutTv_showInput[]
+  updateMany?: Prisma.ReviewsUpdateManyWithWhereWithoutTv_showInput | Prisma.ReviewsUpdateManyWithWhereWithoutTv_showInput[]
+  deleteMany?: Prisma.ReviewsScalarWhereInput | Prisma.ReviewsScalarWhereInput[]
+}
+
 export type ReviewsCreateWithoutUserInput = {
   comment: string
   rating: number
-  movie: Prisma.MoviesCreateNestedOneWithoutReviewsInput
+  movie?: Prisma.MoviesCreateNestedOneWithoutReviewsInput
+  tv_show?: Prisma.TVShowCreateNestedOneWithoutReviewsInput
 }
 
 export type ReviewsUncheckedCreateWithoutUserInput = {
   id?: number
   comment: string
   rating: number
-  movie_id: string
+  movie_id?: string | null
+  tv_id?: string | null
 }
 
 export type ReviewsCreateOrConnectWithoutUserInput = {
@@ -496,13 +564,15 @@ export type ReviewsScalarWhereInput = {
   id?: Prisma.IntFilter<"Reviews"> | number
   comment?: Prisma.StringFilter<"Reviews"> | string
   rating?: Prisma.IntFilter<"Reviews"> | number
-  movie_id?: Prisma.StringFilter<"Reviews"> | string
+  movie_id?: Prisma.StringNullableFilter<"Reviews"> | string | null
+  tv_id?: Prisma.StringNullableFilter<"Reviews"> | string | null
   user_id?: Prisma.StringFilter<"Reviews"> | string
 }
 
 export type ReviewsCreateWithoutMovieInput = {
   comment: string
   rating: number
+  tv_show?: Prisma.TVShowCreateNestedOneWithoutReviewsInput
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
 }
 
@@ -510,6 +580,7 @@ export type ReviewsUncheckedCreateWithoutMovieInput = {
   id?: number
   comment: string
   rating: number
+  tv_id?: string | null
   user_id: string
 }
 
@@ -539,43 +610,90 @@ export type ReviewsUpdateManyWithWhereWithoutMovieInput = {
   data: Prisma.XOR<Prisma.ReviewsUpdateManyMutationInput, Prisma.ReviewsUncheckedUpdateManyWithoutMovieInput>
 }
 
+export type ReviewsCreateWithoutTv_showInput = {
+  comment: string
+  rating: number
+  movie?: Prisma.MoviesCreateNestedOneWithoutReviewsInput
+  user: Prisma.UserCreateNestedOneWithoutReviewsInput
+}
+
+export type ReviewsUncheckedCreateWithoutTv_showInput = {
+  id?: number
+  comment: string
+  rating: number
+  movie_id?: string | null
+  user_id: string
+}
+
+export type ReviewsCreateOrConnectWithoutTv_showInput = {
+  where: Prisma.ReviewsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReviewsCreateWithoutTv_showInput, Prisma.ReviewsUncheckedCreateWithoutTv_showInput>
+}
+
+export type ReviewsCreateManyTv_showInputEnvelope = {
+  data: Prisma.ReviewsCreateManyTv_showInput | Prisma.ReviewsCreateManyTv_showInput[]
+  skipDuplicates?: boolean
+}
+
+export type ReviewsUpsertWithWhereUniqueWithoutTv_showInput = {
+  where: Prisma.ReviewsWhereUniqueInput
+  update: Prisma.XOR<Prisma.ReviewsUpdateWithoutTv_showInput, Prisma.ReviewsUncheckedUpdateWithoutTv_showInput>
+  create: Prisma.XOR<Prisma.ReviewsCreateWithoutTv_showInput, Prisma.ReviewsUncheckedCreateWithoutTv_showInput>
+}
+
+export type ReviewsUpdateWithWhereUniqueWithoutTv_showInput = {
+  where: Prisma.ReviewsWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReviewsUpdateWithoutTv_showInput, Prisma.ReviewsUncheckedUpdateWithoutTv_showInput>
+}
+
+export type ReviewsUpdateManyWithWhereWithoutTv_showInput = {
+  where: Prisma.ReviewsScalarWhereInput
+  data: Prisma.XOR<Prisma.ReviewsUpdateManyMutationInput, Prisma.ReviewsUncheckedUpdateManyWithoutTv_showInput>
+}
+
 export type ReviewsCreateManyUserInput = {
   id?: number
   comment: string
   rating: number
-  movie_id: string
+  movie_id?: string | null
+  tv_id?: string | null
 }
 
 export type ReviewsUpdateWithoutUserInput = {
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
-  movie?: Prisma.MoviesUpdateOneRequiredWithoutReviewsNestedInput
+  movie?: Prisma.MoviesUpdateOneWithoutReviewsNestedInput
+  tv_show?: Prisma.TVShowUpdateOneWithoutReviewsNestedInput
 }
 
 export type ReviewsUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
-  movie_id?: Prisma.StringFieldUpdateOperationsInput | string
+  movie_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tv_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReviewsUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
-  movie_id?: Prisma.StringFieldUpdateOperationsInput | string
+  movie_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tv_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ReviewsCreateManyMovieInput = {
   id?: number
   comment: string
   rating: number
+  tv_id?: string | null
   user_id: string
 }
 
 export type ReviewsUpdateWithoutMovieInput = {
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tv_show?: Prisma.TVShowUpdateOneWithoutReviewsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
 }
 
@@ -583,6 +701,7 @@ export type ReviewsUncheckedUpdateWithoutMovieInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tv_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -590,6 +709,38 @@ export type ReviewsUncheckedUpdateManyWithoutMovieInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   comment?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tv_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type ReviewsCreateManyTv_showInput = {
+  id?: number
+  comment: string
+  rating: number
+  movie_id?: string | null
+  user_id: string
+}
+
+export type ReviewsUpdateWithoutTv_showInput = {
+  comment?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  movie?: Prisma.MoviesUpdateOneWithoutReviewsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
+}
+
+export type ReviewsUncheckedUpdateWithoutTv_showInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  movie_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  user_id?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type ReviewsUncheckedUpdateManyWithoutTv_showInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.StringFieldUpdateOperationsInput | string
+  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  movie_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user_id?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -600,8 +751,10 @@ export type ReviewsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   comment?: boolean
   rating?: boolean
   movie_id?: boolean
+  tv_id?: boolean
   user_id?: boolean
-  movie?: boolean | Prisma.MoviesDefaultArgs<ExtArgs>
+  movie?: boolean | Prisma.Reviews$movieArgs<ExtArgs>
+  tv_show?: boolean | Prisma.Reviews$tv_showArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviews"]>
 
@@ -610,8 +763,10 @@ export type ReviewsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   comment?: boolean
   rating?: boolean
   movie_id?: boolean
+  tv_id?: boolean
   user_id?: boolean
-  movie?: boolean | Prisma.MoviesDefaultArgs<ExtArgs>
+  movie?: boolean | Prisma.Reviews$movieArgs<ExtArgs>
+  tv_show?: boolean | Prisma.Reviews$tv_showArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviews"]>
 
@@ -620,8 +775,10 @@ export type ReviewsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   comment?: boolean
   rating?: boolean
   movie_id?: boolean
+  tv_id?: boolean
   user_id?: boolean
-  movie?: boolean | Prisma.MoviesDefaultArgs<ExtArgs>
+  movie?: boolean | Prisma.Reviews$movieArgs<ExtArgs>
+  tv_show?: boolean | Prisma.Reviews$tv_showArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reviews"]>
 
@@ -630,34 +787,40 @@ export type ReviewsSelectScalar = {
   comment?: boolean
   rating?: boolean
   movie_id?: boolean
+  tv_id?: boolean
   user_id?: boolean
 }
 
-export type ReviewsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "comment" | "rating" | "movie_id" | "user_id", ExtArgs["result"]["reviews"]>
+export type ReviewsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "comment" | "rating" | "movie_id" | "tv_id" | "user_id", ExtArgs["result"]["reviews"]>
 export type ReviewsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  movie?: boolean | Prisma.MoviesDefaultArgs<ExtArgs>
+  movie?: boolean | Prisma.Reviews$movieArgs<ExtArgs>
+  tv_show?: boolean | Prisma.Reviews$tv_showArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type ReviewsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  movie?: boolean | Prisma.MoviesDefaultArgs<ExtArgs>
+  movie?: boolean | Prisma.Reviews$movieArgs<ExtArgs>
+  tv_show?: boolean | Prisma.Reviews$tv_showArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type ReviewsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  movie?: boolean | Prisma.MoviesDefaultArgs<ExtArgs>
+  movie?: boolean | Prisma.Reviews$movieArgs<ExtArgs>
+  tv_show?: boolean | Prisma.Reviews$tv_showArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $ReviewsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Reviews"
   objects: {
-    movie: Prisma.$MoviesPayload<ExtArgs>
+    movie: Prisma.$MoviesPayload<ExtArgs> | null
+    tv_show: Prisma.$TVShowPayload<ExtArgs> | null
     user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     comment: string
     rating: number
-    movie_id: string
+    movie_id: string | null
+    tv_id: string | null
     user_id: string
   }, ExtArgs["result"]["reviews"]>
   composites: {}
@@ -1053,7 +1216,8 @@ readonly fields: ReviewsFieldRefs;
  */
 export interface Prisma__ReviewsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  movie<T extends Prisma.MoviesDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MoviesDefaultArgs<ExtArgs>>): Prisma.Prisma__MoviesClient<runtime.Types.Result.GetResult<Prisma.$MoviesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  movie<T extends Prisma.Reviews$movieArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reviews$movieArgs<ExtArgs>>): Prisma.Prisma__MoviesClient<runtime.Types.Result.GetResult<Prisma.$MoviesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  tv_show<T extends Prisma.Reviews$tv_showArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Reviews$tv_showArgs<ExtArgs>>): Prisma.Prisma__TVShowClient<runtime.Types.Result.GetResult<Prisma.$TVShowPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1088,6 +1252,7 @@ export interface ReviewsFieldRefs {
   readonly comment: Prisma.FieldRef<"Reviews", 'String'>
   readonly rating: Prisma.FieldRef<"Reviews", 'Int'>
   readonly movie_id: Prisma.FieldRef<"Reviews", 'String'>
+  readonly tv_id: Prisma.FieldRef<"Reviews", 'String'>
   readonly user_id: Prisma.FieldRef<"Reviews", 'String'>
 }
     
@@ -1487,6 +1652,44 @@ export type ReviewsDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Reviews to delete.
    */
   limit?: number
+}
+
+/**
+ * Reviews.movie
+ */
+export type Reviews$movieArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Movies
+   */
+  select?: Prisma.MoviesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Movies
+   */
+  omit?: Prisma.MoviesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MoviesInclude<ExtArgs> | null
+  where?: Prisma.MoviesWhereInput
+}
+
+/**
+ * Reviews.tv_show
+ */
+export type Reviews$tv_showArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TVShow
+   */
+  select?: Prisma.TVShowSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TVShow
+   */
+  omit?: Prisma.TVShowOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TVShowInclude<ExtArgs> | null
+  where?: Prisma.TVShowWhereInput
 }
 
 /**

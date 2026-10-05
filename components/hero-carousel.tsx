@@ -6,6 +6,7 @@ import Image from "next/image";
 import NextLink from "next/link";
 import { Star, Play, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { BACKDROP_BASE } from "@/lib/tmdb";
+import { useEffect, useRef } from "react";
 
 export default function HeroCarousel({
   movies,
@@ -16,34 +17,75 @@ export default function HeroCarousel({
 }) {
   const [index, setIndex] = useState(0);
   const featured = movies[index];
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
 
-  const prev = () => setIndex((i) => (i === 0 ? movies.length - 1 : i - 1));
-  const next = () => setIndex((i) => (i === movies.length - 1 ? 0 : i + 1));
+  const handleNext = () => {
+    setDirection("next");
+    setIndex((i) => (i === movies.length - 1 ? 0 : i + 1));
+  };
+  
+  const handlePrev = () => {
+    setDirection("prev");
+    setIndex((i) => (i === 0 ? movies.length - 1 : i - 1));
+  };
 
   if (!featured) return null;
 
+  const startAutoClick = () => {
+    if (intervalRef.current) {
+        return;
+    }
+    intervalRef.current = setInterval(() => {
+      buttonRef.current?.click()
+    }, 6000);
+  }
+
+  const stopAutoClick = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }
+
+  useEffect(() => {
+    startAutoClick();
+    return () => stopAutoClick();
+  }, []);
+
   return (
-    <section className="relative h-[340px] rounded-large overflow-hidden group">
-      <Image
-        src={`${BACKDROP_BASE}${featured.backdrop_path}`}
-        alt={featured.title}
-        fill
-        priority
-        sizes="(max-width: 1024px) 100vw, 800px"
-        className="object-cover"
-      />
+    <section className="relative h-[340px] rounded-large overflow-hidden group" onMouseEnter={stopAutoClick} onMouseLeave={startAutoClick}>
+     <div
+        key={featured.id}
+        className={`absolute inset-0 ${
+          direction === "next"
+            ? "animate-slide-next"
+            : "animate-slide-prev"
+        }`}
+      >
+        <Image
+          src={`${BACKDROP_BASE}${featured.backdrop_path}`}
+          alt={featured.title}
+          fill
+          priority
+          sizes="(max-width: 1024px) 100vw, 800px"
+          className="object-cover"
+        />
+      </div>
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
 
       {/* Arrows */}
       <button
-        onClick={prev}
+        onClick={handlePrev}
         aria-label="Previous"
         className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-full bg-background/40 text-foreground-400 hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
       >
         <ChevronLeft size={20} />
       </button>
       <button
-        onClick={next}
+        ref={buttonRef}
+        onClick={handleNext}
         aria-label="Next"
         className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-full bg-background/40 text-foreground-400 hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
       >

@@ -5,7 +5,6 @@ import { Button, Input, Label, Separator } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, UserRound } from "lucide-react";
 import { Alert } from "@heroui/react";
 
 export default function AuthForm({ formType }: { formType: number }) {
@@ -16,14 +15,12 @@ export default function AuthForm({ formType }: { formType: number }) {
   const [name, setName] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [last_name, setLastName] = useState("");
-  const [first_name, setFirstName] = useState("");
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const result = isSignUp
-      ? await authClient.signUp.email({ email, password, name, first_name, last_name})
+      ? await authClient.signUp.email({ email, password, name})
       : await authClient.signIn.email({ email, password });
     
     if (result.error) {
@@ -71,26 +68,6 @@ export default function AuthForm({ formType }: { formType: number }) {
                   placeholder="Enter your nickname"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="input-type-lastname">Last Name</Label>
-                <Input
-                  id="input-type-lastname"
-                  aria-label="LastName"
-                  placeholder="Enter your Last Name"
-                  value={last_name}
-                  onChange={(event) => setLastName(event.target.value)}
-                />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="input-type-firstname">First Name</Label>
-                <Input
-                  id="input-type-firstname"
-                  aria-label="FirstName"
-                  placeholder="Enter your First Name"
-                  value={first_name}
-                  onChange={(event) => setFirstName(event.target.value)}
                 />
             </div>
           </>

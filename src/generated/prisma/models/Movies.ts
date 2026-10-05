@@ -331,9 +331,9 @@ export type MoviesSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
-export type MoviesScalarRelationFilter = {
-  is?: Prisma.MoviesWhereInput
-  isNot?: Prisma.MoviesWhereInput
+export type MoviesNullableScalarRelationFilter = {
+  is?: Prisma.MoviesWhereInput | null
+  isNot?: Prisma.MoviesWhereInput | null
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -350,10 +350,12 @@ export type MoviesCreateNestedOneWithoutReviewsInput = {
   connect?: Prisma.MoviesWhereUniqueInput
 }
 
-export type MoviesUpdateOneRequiredWithoutReviewsNestedInput = {
+export type MoviesUpdateOneWithoutReviewsNestedInput = {
   create?: Prisma.XOR<Prisma.MoviesCreateWithoutReviewsInput, Prisma.MoviesUncheckedCreateWithoutReviewsInput>
   connectOrCreate?: Prisma.MoviesCreateOrConnectWithoutReviewsInput
   upsert?: Prisma.MoviesUpsertWithoutReviewsInput
+  disconnect?: Prisma.MoviesWhereInput | boolean
+  delete?: Prisma.MoviesWhereInput | boolean
   connect?: Prisma.MoviesWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.MoviesUpdateToOneWithWhereWithoutReviewsInput, Prisma.MoviesUpdateWithoutReviewsInput>, Prisma.MoviesUncheckedUpdateWithoutReviewsInput>
 }

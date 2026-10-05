@@ -12,9 +12,7 @@ export async function getUserData({userId} : {userId: string}) {
         },
         select:{
             email: true,
-            name: true,
-            first_name: true,
-            last_name: true,
+            name: true
         }
     })
 
@@ -34,4 +32,31 @@ export async function updateUserData(userData: userData, userId: string){
     })
 
     return updateUserData;
+}
+
+export async function getUsersReviews(userId: string) {
+    const review = await prisma.reviews.findMany({
+        where: {
+            user_id: userId
+        },
+        select: {
+            id: true,
+            movie: true,
+            tv_show: true,
+            comment: true,
+            rating: true
+        }
+    })
+
+    return review;
+}
+
+export async function getUsersReviewCount(userId: string) {
+    const reviewCount = await prisma.reviews.count({
+        where: {
+            user_id: userId
+        }
+    })
+
+    return reviewCount;
 }

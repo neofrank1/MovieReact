@@ -92,3 +92,32 @@
   --warning: oklch(82.03% 0.1415 56.92);
   --warning-foreground: oklch(21.03% 0.0059 56.92);
 }
+
+@theme {
+  --animate-slide-next: slide-next 0.4s ease-out;
+  --animate-slide-prev: slide-prev 0.4s ease-out;
+
+  @keyframes slide-next {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-prev {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+}

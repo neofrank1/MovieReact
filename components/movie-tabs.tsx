@@ -1,9 +1,25 @@
 // components/movie-tabs.tsx
 "use client";
 import { useState } from "react";
-import MovieReviews from "@/components/movie-reviews";
+import MovieReviews, { type Review } from "@/components/movie-reviews";
 
-export default function MovieTabs({ movie }: { movie: any }) {
+type MovieWithReviews = {
+  id: number | string;
+  overview: string;
+  title?: string;
+  name?: string;
+  poster_path?: string | null;
+};
+
+export default function MovieTabs({
+  movie,
+  reviews = [],
+  reviewed
+}: {
+  movie: MovieWithReviews;
+  reviews?: Review[];
+  reviewed?: Boolean | undefined
+}) {
   const [tab, setTab] = useState<"overview" | "reviews">("overview");
 
   return (
@@ -25,7 +41,7 @@ export default function MovieTabs({ movie }: { movie: any }) {
       </div>
       <div className="py-4 text-sm text-foreground-400">
         {tab === "overview" ? movie.overview : (
-            <MovieReviews reviews={movie.reviews?.results ?? []} />
+            <MovieReviews movie={movie} reviews={reviews} reviewed={reviewed}/>
         )}
       </div>
     </div>

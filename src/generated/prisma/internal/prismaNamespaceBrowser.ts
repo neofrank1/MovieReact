@@ -56,7 +56,9 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Movies: 'Movies',
-  Reviews: 'Reviews'
+  TVShow: 'TVShow',
+  Reviews: 'Reviews',
+  UserDetails: 'UserDetails'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -78,8 +80,6 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  first_name: 'first_name',
-  last_name: 'last_name',
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
@@ -146,15 +146,37 @@ export const MoviesScalarFieldEnum = {
 export type MoviesScalarFieldEnum = (typeof MoviesScalarFieldEnum)[keyof typeof MoviesScalarFieldEnum]
 
 
+export const TVShowScalarFieldEnum = {
+  id: 'id',
+  tv_show_id: 'tv_show_id',
+  tv_title: 'tv_title',
+  poster_path: 'poster_path'
+} as const
+
+export type TVShowScalarFieldEnum = (typeof TVShowScalarFieldEnum)[keyof typeof TVShowScalarFieldEnum]
+
+
 export const ReviewsScalarFieldEnum = {
   id: 'id',
   comment: 'comment',
   rating: 'rating',
   movie_id: 'movie_id',
+  tv_id: 'tv_id',
   user_id: 'user_id'
 } as const
 
 export type ReviewsScalarFieldEnum = (typeof ReviewsScalarFieldEnum)[keyof typeof ReviewsScalarFieldEnum]
+
+
+export const UserDetailsScalarFieldEnum = {
+  id: 'id',
+  first_name: 'first_name',
+  last_name: 'last_name',
+  birthdate: 'birthdate',
+  user_id: 'user_id'
+} as const
+
+export type UserDetailsScalarFieldEnum = (typeof UserDetailsScalarFieldEnum)[keyof typeof UserDetailsScalarFieldEnum]
 
 
 export const SortOrder = {

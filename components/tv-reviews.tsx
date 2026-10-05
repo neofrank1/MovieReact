@@ -4,8 +4,9 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { buttonVariants } from "@heroui/styles";
-import { insertMovieReview } from "@/app/(shows)/actions/showActions";
+import { insertTVReview } from "@/app/(shows)/actions/showActions";
 import { authClient } from "@/lib/auth-client";
+
 
 export type Review = {
   id: string;
@@ -16,7 +17,7 @@ export type Review = {
 };
 
 type Props = {
-  movie: {
+  tv_show: {
     id: number | string;
     title?: string;
     name?: string;
@@ -117,7 +118,7 @@ function ReviewItem({ review }: { review: Review }) {
   );
 }
 
-export default function MovieReviews({ movie, reviews = [], reviewed}: Props) {
+export default function TVReviews({ tv_show, reviews = [], reviewed}: Props) {
   const { data: session, isPending } = authClient.useSession();
   const [items, setItems] = useState<Review[]>(reviews);
   const [rating, setRating] = useState(0);
@@ -140,13 +141,13 @@ export default function MovieReviews({ movie, reviews = [], reviewed}: Props) {
     const author = currentUser.name || "Movie fan";
 
     try {
-      const result = await insertMovieReview({
+      const result = await insertTVReview({
         userId: currentUser.id,
-        showId: String(movie.id),
+        showId: String(tv_show.id),
         rating: rating,
-        movie_title: movie.title ?? movie.name ?? "Untitled",
-        movie_poster: movie.poster_path ?? "",
-        movie_id: String(movie.id),
+        tv_title: tv_show.title ?? tv_show.name ?? "Untitled",
+        tv_poster: tv_show.poster_path ?? "",
+        tv_id: String(tv_show.id),
         comment: content,
       });
 

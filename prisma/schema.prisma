@@ -11,8 +11,6 @@ generator client {
 model User {
   id            String    @id
   name          String
-  first_name    String?
-  last_name     String?
   email         String
   emailVerified Boolean   @default(false)
   image         String?
@@ -21,6 +19,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   reviews       Reviews[]
+  user_details  UserDetails[]
 
   @@unique([email])
   @@map("user")
@@ -77,8 +76,8 @@ model Verification {
 }
 
 model Movies {
-  id          Int       @id @default(autoincrement())
-  movie_id    String    @unique
+  id          Int      @id @default(autoincrement())
+  movie_id    String   @unique
   movie_title String
   poster_path String
   reviews     Reviews[]
@@ -86,16 +85,42 @@ model Movies {
   @@map("movies")
 }
 
+model TVShow {
+  id          Int      @id @default(autoincrement())
+  tv_show_id  String   @unique
+  tv_title    String
+  poster_path String
+  reviews     Reviews[]
+
+  @@map("tv_shows")
+}
+
 model Reviews {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   comment  String
   rating   Int
-  movie_id String
+  movie_id String?
+  tv_id    String?
   user_id  String
-  movie    Movies @relation(fields: [movie_id], references: [movie_id], onDelete: Cascade)
-  user     User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  movie    Movies? @relation(fields: [movie_id], references: [movie_id], onDelete: Cascade)
+  tv_show  TVShow? @relation(fields: [tv_id], references: [tv_show_id], onDelete: Cascade)
+  user     User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([movie_id])
+  @@index([tv_id])
   @@index([user_id])
   @@map("reviews")
+}
+
+model UserDetails {
+  id            Int     @id @default(autoincrement())
+  first_name    String?
+  last_name     String?
+  birthdate     DateTime?
+  user_id       String
+  user          User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("user_details")
 }

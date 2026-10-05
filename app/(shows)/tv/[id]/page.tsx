@@ -7,7 +7,10 @@ import SiteNavbar from "@/components/navbar/site-navbar";
 import TVCard from "@/components/tv-card";
 import TVTabs from "@/components/tv-tabs";
 import TrailerModal from "@/components/trailer-modal";
+import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { getTVShowReviews, checkTVShowReviewed } from "../../actions/showActions";
 
 type Props = {
   params: Promise<{ id: string }>
@@ -35,8 +38,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function TVDetailsPage({ params }: Props) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   const param = await params;
   const data = await getTV(param.id);
+  const dbReviews = await getTVShowReviews(param.id);
+  const reviewResult = await checkTVShowReviewed(String(data.id), String(session?.user.id));
+  const reviews = dbReviews.map((review) => ({
+    id: String(review.id),
+    author: review.user.name || "Movie fan",
+    content: review.comment,
+    created_at: "",
+    author_details: { rating: review.rating },
+  }));
   const director = data.credits?.crew?.find((c: any) => c.job === "Director");
   const cast = data.credits?.cast?.slice(0, 20) ?? [];
   const trailer = data.videos?.results?.find(
@@ -107,7 +123,7 @@ export default async function TVDetailsPage({ params }: Props) {
       </main>
 
       <section className="mx-auto w-full max-w-6xl px-6">
-        <TVTabs tv={data} />
+        <TVTabs tv={data} reviews={reviews} reviewed={reviewResult}/>
       </section>
 
       {data.similar?.results?.length > 0 && (

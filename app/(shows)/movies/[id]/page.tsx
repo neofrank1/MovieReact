@@ -7,7 +7,10 @@ import SiteNavbar from "@/components/navbar/site-navbar";
 import MovieCard from "@/components/movie-card";
 import MovieTabs from "@/components/movie-tabs";
 import TrailerModal from "@/components/trailer-modal";
+import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { getMovieReviews, checkMovieReviewed } from "../../actions/showActions";
 
 type Props = {
   params: Promise<{ id: string }>
@@ -35,9 +38,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function MovieDetailsPage({ params }: Props) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   const param = await params;
   const movie = await getMovie(param.id);
   const director = movie.credits?.crew?.find((c: any) => c.job === "Director");
+  const dbReviews = await getMovieReviews(param.id);
+  const reviewResult = await checkMovieReviewed(String(movie.id), String(session?.user.id));
+  const reviews = dbReviews.map((review) => ({
+    id: String(review.id),
+    author: review.user.name || "Movie fan",
+    content: review.comment,
+    created_at: "",
+    author_details: { rating: review.rating },
+  }));
   const cast = movie.credits?.cast?.slice(0, 20) ?? [];
   const trailer = movie.videos?.results?.find(
     (video: { site?: string; type?: string; key?: string }) =>
@@ -107,7 +123,7 @@ export default async function MovieDetailsPage({ params }: Props) {
       </main>
 
       <section className="mx-auto w-full max-w-6xl px-6">
-        <MovieTabs movie={movie} />
+        <MovieTabs movie={movie} reviews={reviews} reviewed={reviewResult}/>
       </section>
 
       {movie.similar?.results?.length > 0 && (

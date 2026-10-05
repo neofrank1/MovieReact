@@ -1,8 +1,25 @@
 // components/tv-tabs.tsx
 "use client";
 import { useState } from "react";
+import TVReviews, { type Review } from "@/components/tv-reviews";
 
-export default function TVTabs({ tv }: { tv: any }) {
+type TVShowWithReviews = {
+  id: number | string;
+  overview: string;
+  title?: string;
+  name?: string;
+  poster_path?: string | null;
+};
+
+export default function TVTabs({
+  tv,
+  reviews = [],
+  reviewed
+}: {
+  tv: TVShowWithReviews;
+  reviews?: Review[];
+  reviewed?: Boolean | undefined
+}) {
   const [tab, setTab] = useState<"overview" | "reviews">("overview");
 
   return (
@@ -23,7 +40,9 @@ export default function TVTabs({ tv }: { tv: any }) {
         ))}
       </div>
       <div className="py-4 text-sm text-foreground-400">
-        {tab === "overview" ? tv.overview : "No reviews yet — be the first to write one."}
+        {tab === "overview" ? tv.overview : (
+          <TVReviews tv_show={tv} reviews={reviews} reviewed={reviewed}/>
+        )}
       </div>
     </div>
   );
