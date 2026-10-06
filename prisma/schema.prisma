@@ -1,0 +1,125 @@
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  reviews       Reviews[]
+  user_details  UserDetails[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model Movies {
+  id          Int      @id @default(autoincrement())
+  movie_id    String   @unique
+  movie_title String
+  poster_path String
+  reviews     Reviews[]
+
+  @@map("movies")
+}
+
+model TVShow {
+  id          Int      @id @default(autoincrement())
+  tv_show_id  String   @unique
+  tv_title    String
+  poster_path String
+  reviews     Reviews[]
+
+  @@map("tv_shows")
+}
+
+model Reviews {
+  id       Int     @id @default(autoincrement())
+  comment  String
+  rating   Int
+  movie_id String?
+  tv_id    String?
+  user_id  String
+
+  movie    Movies? @relation(fields: [movie_id], references: [movie_id], onDelete: Cascade)
+  tv_show  TVShow? @relation(fields: [tv_id], references: [tv_show_id], onDelete: Cascade)
+  user     User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([movie_id])
+  @@index([tv_id])
+  @@index([user_id])
+  @@map("reviews")
+}
+
+model UserDetails {
+  id            Int     @id @default(autoincrement())
+  first_name    String?
+  last_name     String?
+  birthdate     DateTime?
+  user_id       String
+  user          User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("user_details")
+}

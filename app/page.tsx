@@ -1,69 +1,116 @@
-import Image from "next/image";
+// app/page.tsx
+import NextLink from "next/link";
+import { getTrending, getGenres, getTopRatedMovie, getTopRatedTV, getPopularTV } from "@/lib/tmdb";
+import MovieCard from "@/components/movie-card";
+import TVCard from "@/components/tv-card";
+import SiteNavbar from "@/components/navbar/site-navbar";
+import HeroCarousel from "@/components/hero-carousel";
+import TopRatedList from "@/components/top-rated-movie-list";
+import TopRatedTVList from "@/components/top-rated-tv-list";
+import type { Metadata } from "next";
+import Footer from "@/components/footer/footer";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Movie Critique",
+  description:
+    "Roast a Movie, or Praise it! Discover the best movies and TV shows, read reviews, and share your own opinions with our community of movie lovers.",
+};
+
+export default async function Home() {
+  const [trendingData, genresData, topRatedData, topRatedTVData, popularTVData] = await Promise.all([
+    getTrending(),
+    getGenres(),
+    getTopRatedMovie(),
+    getTopRatedTV(),
+    getPopularTV(),
+  ]);
+
+  const trending = trendingData.results ?? [];
+  const genres = genresData.genres ?? [];
+  const topRated = (topRatedData.results ?? []).slice(0, 5);
+  const topRatedTV = (topRatedTVData.results ?? []).slice(0, 5);
+  const popular = popularTVData.results ?? [];
+
+  // Map genre IDs → names for the hero badges
+  const genreMap: Record<number, string> = Object.fromEntries(
+    genres.map((g: any) => [g.id, g.name])
+  );
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <SiteNavbar />
+      <main className="mx-auto max-w-6xl px-6 py-6 grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-8">
+        <div className="min-w-0">
+          <HeroCarousel movies={trending.slice(0, 5)} genreMap={genreMap} />
+
+          <section className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold flex items-center gap-2">
+                🔥 Trending movies
+              </h2>
+              <NextLink
+                href="/movies"
+                className="text-xs text-primary hover:underline"
+              >
+                View all →
+              </NextLink>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+              {trending.slice(0, 6).map((movie: any) => (
+                <MovieCard key={movie.id} movie={movie} />
+              ))}
+            </div>
+          </section>
+
+          <section className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold flex items-center gap-2">
+                🔥 Popular TV Shows
+              </h2>
+              <NextLink
+                href="/tv"
+                className="text-xs text-primary hover:underline"
+              >
+                View all →
+              </NextLink>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+              {popular.slice(0, 6).map((popularTV: any) => (
+                <TVCard key={popularTV.id} tv={popularTV} />
+              ))}
+            </div>
+          </section>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        
+
+        <aside className="flex flex-col gap-8">
+          <div>
+            <h2 className="text-base font-semibold mb-3">Popular genres</h2>
+            <div className="flex flex-wrap gap-2">
+              {genres.slice(0, 12).map((g: any) => (
+                <NextLink
+                  key={g.id}
+                  href={`/movies?genre=${g.id}`}
+                  className="text-xs px-3 py-1.5 rounded-medium bg-content2 border border-divider text-foreground-400 hover:text-foreground hover:border-primary/50 transition-colors"
+                >
+                  {g.name}
+                </NextLink>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-base font-semibold mb-3">Top Rated Movie</h2>
+            <TopRatedList movies={topRated} />
+          </div>
+           <div>
+            <h2 className="text-base font-semibold mb-3">Top Rated TV Shows</h2>
+            <TopRatedTVList tv={topRatedTV} />
+          </div>
+        </aside>
       </main>
-    </div>
+      <Footer />
+    </>
   );
 }
