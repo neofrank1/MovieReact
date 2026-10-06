@@ -7,7 +7,6 @@ import { authClient } from "@/lib/auth-client";
 
 export default function Footer() {
   const session = authClient.useSession();
-  console.log(session);
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
