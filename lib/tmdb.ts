@@ -22,3 +22,4 @@ export const getTVGenres = () => tmdbFetch("/genre/tv/list");
 export const getTopRatedTV = () => tmdbFetch("/tv/top_rated");
 export const getPopularTV = () => tmdbFetch("/tv/popular");
 export const discoverTV = (genreId?: string, page = 1) => tmdbFetch(`/discover/tv?page=${page}${genreId ? `&with_genres=${genreId}` : ""}`);
+export const searchMulti = (query: string) => tmdbFetch(`/search/multi?query=${encodeURIComponent(query)}&include_adult=false`);

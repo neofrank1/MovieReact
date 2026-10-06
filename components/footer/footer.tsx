@@ -7,6 +7,7 @@ import { authClient } from "@/lib/auth-client";
 
 export default function Footer() {
   const session = authClient.useSession();
+  console.log(session);
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
@@ -40,15 +41,16 @@ export default function Footer() {
                 <Tv size={15} /> TV shows
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/reviews" className="inline-flex items-center gap-2 text-foreground-500 transition-colors hover:text-primary">
                 <MessageSquareText size={15} /> Reviews
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
 
-        {!session ? (<div>
+        {!session.data && (
+        <div>
           <h2 className="text-sm font-semibold text-foreground">Your account</h2>
           <ul className="mt-4 space-y-3 text-sm">
             <li>
@@ -63,9 +65,6 @@ export default function Footer() {
             </li>
           </ul>
         </div>
-        ): (
-          <>
-          </>
         )}
       </div>
 

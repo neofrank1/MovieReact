@@ -1,7 +1,7 @@
 // components/movie-reviews.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { buttonVariants } from "@heroui/styles";
 import { insertMovieReview } from "@/app/(shows)/actions/showActions";
@@ -151,7 +151,6 @@ export default function MovieReviews({ movie, reviews = [], reviewed}: Props) {
       });
 
       if (!result.success) {
-        setReviewed(false);
         return;
       }
         
@@ -168,11 +167,12 @@ export default function MovieReviews({ movie, reviews = [], reviewed}: Props) {
       ]);
       setText("");
       setRating(0);
+      setReviewed(true);
     } finally {
       setIsSubmitting(false);
     }
   }
-
+  
   const inputClass =
     "w-full rounded-medium border border-divider bg-content2 px-3 py-2 text-sm outline-none placeholder:text-foreground-500 focus:border-foreground-400";
 
@@ -183,7 +183,7 @@ export default function MovieReviews({ movie, reviews = [], reviewed}: Props) {
         <span className="text-foreground-500">({items.length})</span>
       </h2>
      
-     { !isReviewed ? (
+     { !isReviewed && (
         <form
           onSubmit={handleSubmit}
           className="mb-6 grid gap-3 rounded-large border border-divider p-4"
@@ -213,12 +213,7 @@ export default function MovieReviews({ movie, reviews = [], reviewed}: Props) {
             </button>
           </div>
         </form>
-     ) : (
-      <>
-      
-      </>
      )}
-      
 
       {items.length === 0 ? (
         <p className="text-sm text-foreground-500">

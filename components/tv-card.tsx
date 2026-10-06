@@ -1,8 +1,9 @@
 // components/movie-card.tsx
 import Image from "next/image";
 import NextLink from "next/link";
-import { Star } from "lucide-react";
+// import { Star } from "lucide-react";
 import { IMAGE_BASE } from "@/lib/tmdb";
+import TmdbRating from "@/components/tmdb-rating";
 
 export default function TVCard({ tv }: { tv: any }) {
   return (
@@ -25,10 +26,14 @@ export default function TVCard({ tv }: { tv: any }) {
       <p className="text-sm font-medium mt-2 line-clamp-1 text-foreground">
         {tv.name}
       </p>
-      <p className="text-xs text-foreground-500 mt-0.5 flex items-center gap-1">
-        <Star size={11} className="text-warning" fill="currentColor" />
-        {tv.vote_average > 0 ? tv.vote_average.toFixed(1) : "—"}
+      <TmdbRating rating={tv.vote_average} compact className="mt-1 text-xs" />
+      {/*
+      Future user rating:
+      <p className="mt-1 flex items-center gap-1 text-xs text-warning">
+        <Star size={11} fill="currentColor" />
+        Your rating
       </p>
+      */}
     </NextLink>
   );
 }

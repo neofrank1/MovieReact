@@ -169,6 +169,7 @@ export default function TVReviews({ tv_show, reviews = [], reviewed}: Props) {
       ]);
       setText("");
       setRating(0);
+      setReviewed(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -184,7 +185,7 @@ export default function TVReviews({ tv_show, reviews = [], reviewed}: Props) {
         <span className="text-foreground-500">({items.length})</span>
       </h2>
      
-     { !isReviewed ? (
+     { !isReviewed && (
         <form
           onSubmit={handleSubmit}
           className="mb-6 grid gap-3 rounded-large border border-divider p-4"
@@ -214,10 +215,6 @@ export default function TVReviews({ tv_show, reviews = [], reviewed}: Props) {
             </button>
           </div>
         </form>
-     ) : (
-      <>
-      
-      </>
      )}
       
 

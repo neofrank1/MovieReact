@@ -2,11 +2,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import NextLink from "next/link";
+// import { Star } from "lucide-react";
 import { LogOut, Search, Menu, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import ThemeSwitch from "../theme-switch";
+import TmdbRating from "@/components/tmdb-rating";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -15,35 +18,100 @@ const navLinks = [
   // { label: "Reviews", href: "/reviews" },
 ];
 
+const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
+
+type SearchResult = {
+  id: number;
+  mediaType: "movie" | "tv";
+  title: string;
+  posterPath: string | null;
+  year: string;
+  rating: number;
+  href: string;
+};
+
 export default function SiteNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const isAuthed = !isPending && !!session?.user;
+  const trimmedQuery = query.trim();
+  const canShowSearchDropdown = isSearchFocused && trimmedQuery.length >= 2;
 
   useEffect(() => {
-    const closeProfileMenu = (event: MouseEvent) => {
+    const closeMenus = (event: MouseEvent) => {
       if (!profileMenuRef.current?.contains(event.target as Node)) {
         setIsProfileMenuOpen(false);
+      }
+
+      if (!searchRef.current?.contains(event.target as Node)) {
+        setIsSearchFocused(false);
       }
     };
 
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsProfileMenuOpen(false);
+      if (event.key === "Escape") {
+        setIsProfileMenuOpen(false);
+        setIsSearchFocused(false);
+      }
     };
 
-    document.addEventListener("mousedown", closeProfileMenu);
+    document.addEventListener("mousedown", closeMenus);
     document.addEventListener("keydown", closeOnEscape);
     return () => {
-      document.removeEventListener("mousedown", closeProfileMenu);
+      document.removeEventListener("mousedown", closeMenus);
       document.removeEventListener("keydown", closeOnEscape);
     };
   }, []);
+
+  useEffect(() => {
+    if (trimmedQuery.length < 2) {
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      setIsSearching(true);
+      setSearchError("");
+
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(trimmedQuery)}`, {
+          signal: controller.signal,
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error ?? "Search is temporarily unavailable.");
+        }
+
+        setSearchResults(data.results ?? []);
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") {
+          setSearchResults([]);
+          setSearchError("Search is temporarily unavailable.");
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsSearching(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, [trimmedQuery]);
 
   const handleSignOut = async () => {
     await authClient.signOut();
@@ -51,6 +119,85 @@ export default function SiteNavbar() {
     router.push("/");
     router.refresh();
   };
+
+  const closeSearch = () => {
+    setIsSearchFocused(false);
+    setIsSearchOpen(false);
+  };
+
+  const searchInput = (autoFocus = false) => (
+    <>
+      <Search size={15} className="text-foreground-500 shrink-0" />
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onFocus={() => setIsSearchFocused(true)}
+        placeholder="Search for movies, TV shows..."
+        autoFocus={autoFocus}
+        className="bg-transparent text-sm w-full outline-none placeholder:text-foreground-500"
+      />
+    </>
+  );
+
+  const searchDropdown = (
+    <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-medium border border-divider bg-background shadow-large">
+      {isSearching ? (
+        <div className="px-3 py-3 text-sm text-foreground-500">Searching...</div>
+      ) : searchError ? (
+        <div className="px-3 py-3 text-sm text-danger">{searchError}</div>
+      ) : searchResults.length > 0 ? (
+        <ul className="max-h-96 overflow-y-auto p-1">
+          {searchResults.map((result) => (
+            <li key={`${result.mediaType}-${result.id}`}>
+              <NextLink
+                href={result.href}
+                onClick={closeSearch}
+                className="flex items-center gap-3 rounded-small px-2 py-2 hover:bg-content2 transition-colors"
+              >
+                <div className="relative h-14 w-10 shrink-0 overflow-hidden rounded-small bg-content2 border border-divider">
+                  {result.posterPath ? (
+                    <Image
+                      src={`${IMAGE_BASE}${result.posterPath}`}
+                      alt={result.title}
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-[10px] text-foreground-500">
+                      N/A
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="line-clamp-1 text-sm font-medium text-foreground">
+                    {result.title}
+                  </p>
+                  <p className="mt-0.5 text-xs text-foreground-500">
+                    {result.mediaType === "movie" ? "Movie" : "TV Show"}
+                    {result.year ? ` • ${result.year}` : ""}
+                  </p>
+                  <TmdbRating rating={result.rating} compact className="mt-1 text-xs" />
+                  {/*
+                  Future user rating:
+                  <p className="mt-1 flex items-center gap-1 text-xs text-warning">
+                    <Star size={11} fill="currentColor" />
+                    Your rating
+                  </p>
+                  */}
+                </div>
+              </NextLink>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="px-3 py-3 text-sm text-foreground-500">
+          No results found.
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-divider bg-background/90 backdrop-blur-lg">
@@ -91,15 +238,11 @@ export default function SiteNavbar() {
         </ul>
 
         {/* Search — desktop inline */}
-        <div className="hidden md:flex items-center gap-2 flex-1 max-w-sm bg-content2 border border-divider rounded-medium px-3 py-1.5">
-          <Search size={15} className="text-foreground-500 shrink-0" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for movies, TV shows..."
-            className="bg-transparent text-sm w-full outline-none placeholder:text-foreground-500"
-          />
+        <div ref={searchRef} className="relative hidden md:block flex-1 max-w-sm">
+          <div className="flex items-center gap-2 bg-content2 border border-divider rounded-medium px-3 py-1.5">
+            {searchInput()}
+          </div>
+          {canShowSearchDropdown && searchDropdown}
         </div>
 
         {/* Right side */}
@@ -193,18 +336,11 @@ export default function SiteNavbar() {
 
       {/* Mobile search bar */}
       {isSearchOpen && (
-        <div className="md:hidden border-t border-divider px-4 py-3">
+        <div ref={searchRef} className="md:hidden border-t border-divider px-4 py-3">
           <div className="flex items-center gap-2 bg-content2 border border-divider rounded-medium px-3 py-2">
-            <Search size={15} className="text-foreground-500 shrink-0" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for movies, TV shows..."
-              autoFocus
-              className="bg-transparent text-sm w-full outline-none placeholder:text-foreground-500"
-            />
+            {searchInput(true)}
           </div>
+          <div className="relative">{canShowSearchDropdown && searchDropdown}</div>
         </div>
       )}
 

@@ -4,8 +4,10 @@
 import { useState } from "react";
 import Image from "next/image";
 import NextLink from "next/link";
-import { Star, Play, Info, ChevronLeft, ChevronRight } from "lucide-react";
+// import { Star } from "lucide-react";
+import { Play, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { BACKDROP_BASE } from "@/lib/tmdb";
+import TmdbRating from "@/components/tmdb-rating";
 import { useEffect, useRef } from "react";
 
 export default function HeroCarousel({
@@ -110,13 +112,18 @@ export default function HeroCarousel({
 
         <h1 className="text-3xl font-semibold">{featured.title}</h1>
 
-        <p className="flex items-center gap-1.5 text-sm mt-2">
-          <Star size={15} className="text-warning" fill="currentColor" />
-          <span className="font-medium">{featured.vote_average.toFixed(1)}/10</span>
-          <span className="text-foreground-500">
-            ({(featured.vote_count / 1000).toFixed(0)}K reviews)
-          </span>
+        <TmdbRating
+          rating={featured.vote_average}
+          voteCount={featured.vote_count}
+          className="mt-2 text-sm"
+        />
+        {/*
+        Future user rating:
+        <p className="mt-2 flex items-center gap-1.5 text-sm text-warning">
+          <Star size={15} fill="currentColor" />
+          Your rating
         </p>
+        */}
 
         <p className="text-sm text-foreground-400 mt-3 line-clamp-3">
           {featured.overview}

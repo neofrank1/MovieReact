@@ -2,8 +2,9 @@
 'use client'
 import Image from "next/image";
 import NextLink from "next/link";
-import { Star } from "lucide-react";
+// import { Star } from "lucide-react";
 import { IMAGE_BASE } from "@/lib/tmdb";
+import TmdbRating from "@/components/tmdb-rating";
 
 export default function TopRatedList({ movies }: { movies: any[] }) {
   return (
@@ -30,10 +31,14 @@ export default function TopRatedList({ movies }: { movies: any[] }) {
             <p className="text-xs font-medium line-clamp-1 group-hover:text-primary transition-colors">
               {movie.title}
             </p>
-            <p className="flex items-center gap-1 text-[11px] text-warning mt-0.5">
+            <TmdbRating rating={movie.vote_average} compact className="mt-1 text-[11px]" />
+            {/*
+            Future user rating:
+            <p className="mt-1 flex items-center gap-1 text-[11px] text-warning">
               <Star size={10} fill="currentColor" />
-              {movie.vote_average.toFixed(1)}
+              Your rating
             </p>
+            */}
           </div>
         </NextLink>
       ))}

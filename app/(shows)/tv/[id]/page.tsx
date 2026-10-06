@@ -1,12 +1,13 @@
 // app/movies/[id]/page.tsx
 import Image from "next/image";
-import { Star } from "lucide-react";
+// import { Star } from "lucide-react";
 import { buttonVariants } from "@heroui/styles";
 import { getTV, IMAGE_BASE } from "@/lib/tmdb";
 import SiteNavbar from "@/components/navbar/site-navbar";
 import TVCard from "@/components/tv-card";
 import TVTabs from "@/components/tv-tabs";
 import TrailerModal from "@/components/trailer-modal";
+import TmdbRating from "@/components/tmdb-rating";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -59,6 +60,9 @@ export default async function TVDetailsPage({ params }: Props) {
     (video: { site?: string; type?: string; key?: string }) =>
       video.site === "YouTube" && video.type === "Trailer"
   );
+  const regularSeasons =
+    data.seasons?.filter((season: { season_number?: number }) => season.season_number !== 0) ?? [];
+  const seasons = regularSeasons.length > 0 ? regularSeasons : data.seasons ?? [];
 
   return (
     <>
@@ -77,13 +81,18 @@ export default async function TVDetailsPage({ params }: Props) {
 
         <div>
           <h1 className="text-2xl font-semibold">{data.name}</h1>
-          <p className="flex items-center gap-1 text-sm text-warning mt-2">
+          <TmdbRating
+            rating={data.vote_average}
+            voteCount={data.vote_count}
+            className="mt-2 text-sm"
+          />
+          {/*
+          Future user rating:
+          <p className="mt-2 flex items-center gap-1 text-sm text-warning">
             <Star size={14} fill="currentColor" />
-            {data.vote_average.toFixed(1)}/10
-            <span className="text-foreground-500">
-              ({data.vote_count.toLocaleString()} reviews)
-            </span>
+            Your rating
           </p>
+          */}
           <div className="flex gap-2 mt-3">
             {data.genres?.map((g: any) => (
               <span
@@ -94,9 +103,41 @@ export default async function TVDetailsPage({ params }: Props) {
               </span>
             ))}
           </div>
-          <p className="text-sm text-foreground-400 mt-4 max-w-xl">
-            {data.overview}
-          </p>
+          <div className="mt-4 max-w-xl space-y-3 text-sm">
+            <div>
+              <p className="text-foreground-500 mb-1">Number of seasons</p>
+              <p className="font-medium text-foreground">
+                {data.number_of_seasons ?? seasons.length}{" "}
+                {(data.number_of_seasons ?? seasons.length) === 1 ? "season" : "seasons"}
+              </p>
+            </div>
+            <div>
+              <p className="text-foreground-500 mb-1">Episodes per season</p>
+              <div className="flex flex-wrap gap-2">
+                {seasons.length > 0 ? (
+                  seasons.map(
+                    (season: {
+                      id: number;
+                      name?: string;
+                      season_number?: number;
+                      episode_count?: number;
+                    }) => (
+                      <span
+                        key={season.id}
+                        className="rounded-medium border border-divider bg-content2 px-2.5 py-1 text-xs text-foreground-400"
+                      >
+                        {season.name ?? `Season ${season.season_number}`}:{" "}
+                        {season.episode_count ?? 0}{" "}
+                        {(season.episode_count ?? 0) === 1 ? "episode" : "episodes"}
+                      </span>
+                    )
+                  )
+                ) : (
+                  <span className="text-foreground-400">No season details available.</span>
+                )}
+              </div>
+            </div>
+          </div>
 
           <div className="flex gap-3 mt-5">
             <TrailerModal title={data.name} trailerKey={trailer?.key} />

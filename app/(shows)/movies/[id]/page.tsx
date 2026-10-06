@@ -1,12 +1,13 @@
 // app/movies/[id]/page.tsx
 import Image from "next/image";
-import { Star } from "lucide-react";
+// import { Star } from "lucide-react";
 import { buttonVariants } from "@heroui/styles";
 import { getMovie, IMAGE_BASE } from "@/lib/tmdb";
 import SiteNavbar from "@/components/navbar/site-navbar";
 import MovieCard from "@/components/movie-card";
 import MovieTabs from "@/components/movie-tabs";
 import TrailerModal from "@/components/trailer-modal";
+import TmdbRating from "@/components/tmdb-rating";
 import { auth } from "@/lib/auth";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -77,13 +78,18 @@ export default async function MovieDetailsPage({ params }: Props) {
 
         <div>
           <h1 className="text-2xl font-semibold">{movie.title}</h1>
-          <p className="flex items-center gap-1 text-sm text-warning mt-2">
+          <TmdbRating
+            rating={movie.vote_average}
+            voteCount={movie.vote_count}
+            className="mt-2 text-sm"
+          />
+          {/*
+          Future user rating:
+          <p className="mt-2 flex items-center gap-1 text-sm text-warning">
             <Star size={14} fill="currentColor" />
-            {movie.vote_average.toFixed(1)}/10
-            <span className="text-foreground-500">
-              ({movie.vote_count.toLocaleString()} reviews)
-            </span>
+            Your rating
           </p>
+          */}
           <div className="flex gap-2 mt-3">
             {movie.genres?.map((g: any) => (
               <span
