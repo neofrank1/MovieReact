@@ -230,15 +230,15 @@ export type UserDetailsOrderByWithRelationInput = {
 
 export type UserDetailsWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  user_id?: string
   AND?: Prisma.UserDetailsWhereInput | Prisma.UserDetailsWhereInput[]
   OR?: Prisma.UserDetailsWhereInput[]
   NOT?: Prisma.UserDetailsWhereInput | Prisma.UserDetailsWhereInput[]
   first_name?: Prisma.StringNullableFilter<"UserDetails"> | string | null
   last_name?: Prisma.StringNullableFilter<"UserDetails"> | string | null
   birthdate?: Prisma.DateTimeNullableFilter<"UserDetails"> | Date | string | null
-  user_id?: Prisma.StringFilter<"UserDetails"> | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "user_id">
 
 export type UserDetailsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

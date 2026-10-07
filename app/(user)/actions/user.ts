@@ -12,7 +12,8 @@ export async function getUserData({userId} : {userId: string}) {
         },
         select:{
             email: true,
-            name: true
+            name: true,
+            user_details: true
         }
     })
 
