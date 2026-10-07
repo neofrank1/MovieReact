@@ -121,5 +121,6 @@ model UserDetails {
   user          User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
+  @@unique([user_id])
   @@map("user_details")
 }
