@@ -1,3 +1,5 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import userData from "../types/user_type";
 
@@ -60,4 +62,44 @@ export async function getUsersReviewCount(userId: string) {
     })
 
     return reviewCount;
+}
+
+export async function userLikes(userId: string, reviewId: number) {
+    const liked = await prisma.likes.create({
+        data: {
+            user_id: userId,
+            review_id: reviewId
+        }
+    })
+
+    return liked;
+}
+
+export async function userUnlikes(userId: string, reviewId: number) {
+    const unliked = await prisma.likes.deleteMany({
+        where: {
+            user_id: userId,
+            review_id: reviewId
+        }
+    })
+
+    return unliked;
+}
+
+export async function checkUserLiked(userId: string | undefined, reviewId: number) {
+
+    if (!userId) {
+        return false;
+    }
+
+    const liked = await prisma.likes.findFirst({
+        where: {
+            user_id: userId,
+            review_id: reviewId
+        }
+    })
+
+    const hasLiked: boolean = Boolean(liked);
+
+    return hasLiked;
 }

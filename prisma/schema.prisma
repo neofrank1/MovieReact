@@ -20,6 +20,7 @@ model User {
   accounts      Account[]
   reviews       Reviews[]
   user_details  UserDetails[]
+  likes         Likes[]
 
   @@unique([email])
   @@map("user")
@@ -101,6 +102,7 @@ model Reviews {
   movie_id String?
   tv_id    String?
   user_id  String
+  likes    Likes[]
 
   movie    Movies? @relation(fields: [movie_id], references: [movie_id], onDelete: Cascade)
   tv_show  TVShow? @relation(fields: [tv_id], references: [tv_show_id], onDelete: Cascade)
@@ -123,4 +125,18 @@ model UserDetails {
   @@index([user_id])
   @@unique([user_id])
   @@map("user_details")
+}
+
+model Likes  {
+  id       Int     @id @default(autoincrement())
+  review_id Int
+  user_id  String
+
+  reviews   Reviews    @relation(fields: [review_id], references: [id], onDelete: Cascade)
+  user     User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([review_id])
+  @@index([user_id])
+  @@map("likes")
+  @@unique([user_id, review_id])
 }

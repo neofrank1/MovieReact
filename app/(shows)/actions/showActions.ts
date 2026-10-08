@@ -154,3 +154,13 @@ export async function checkTVShowReviewed(tv_show_id: string, user_id: string) {
 
     return hasReviewed;
 }
+
+export async function countLikes(reviewId: number) {
+    const count = await prisma.likes.count({
+        where: {
+            review_id: reviewId
+        }
+    });
+
+    return count;
+}

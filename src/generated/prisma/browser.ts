@@ -57,3 +57,8 @@ export type Reviews = Prisma.ReviewsModel
  * 
  */
 export type UserDetails = Prisma.UserDetailsModel
+/**
+ * Model Likes
+ * 
+ */
+export type Likes = Prisma.LikesModel

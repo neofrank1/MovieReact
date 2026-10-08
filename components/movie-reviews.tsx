@@ -2,13 +2,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { Heart, Star } from "lucide-react";
 import { buttonVariants } from "@heroui/styles";
-import { insertMovieReview } from "@/app/(shows)/actions/showActions";
+import { insertMovieReview, countLikes } from "@/app/(shows)/actions/showActions";
 import { authClient } from "@/lib/auth-client";
+import { Separator } from "@heroui/react";
+import { ToggleButton } from '@heroui/react';
+import { userLikes, checkUserLiked } from "@/app/(user)/actions/user";
 
 export type Review = {
-  id: string;
+  id: number | string;
   author: string;
   content: string;
   created_at: string;
@@ -67,13 +70,77 @@ function StarRating({
   );
 }
 
+
 function ReviewItem({ review }: { review: Review }) {
+  const userSession = authClient.useSession();
+  const userData = userSession.data?.user
   const [expanded, setExpanded] = useState(false);
+  const [count, setCount] = useState(0);
+  const [liked, setLiked] = useState(false);
   const long = review.content.length > 320;
   // TMDB ratings are out of 10, the star display is out of 5
   const rating = review.author_details?.rating
     ? review.author_details.rating
     : 0;
+
+  useEffect(() => {
+
+    async function checkLiked() {
+      if (!userData?.id) {
+        setLiked(false);
+        return;
+      }
+
+      try {
+        const result = await checkUserLiked(userData.id, Number(review.id));
+        setLiked(result);
+      } catch (error) {
+        console.error("Failed to check if user liked the review:", error);
+      }
+    }
+
+    checkLiked();
+  }, [userData?.id, review.id]);
+  
+  useEffect(() => {
+    async function loadLikes() {
+      try {
+        const result = await countLikes(Number(review.id));
+        setCount(result);
+      } catch (error) {
+        console.error("Failed to load likes:", error);
+      }
+    }
+
+    loadLikes();
+  }, [review.id]);
+
+  async function handleLike(isSelected: boolean, usersId: string | undefined, reviewId: number) {
+    if (isSelected) {
+
+      if (!usersId) {
+        console.log("User not logged in");
+        return;
+      }
+
+      try {
+        const result = await userLikes(usersId, Number(reviewId));
+
+        if (!result) {
+          console.log("Failed to like review");
+          return;
+        }
+      
+        setCount((prev) => prev + 1);
+      } catch {
+        console.log("Error Bitch!");
+      }
+
+      
+    } else {
+      setCount((prev) => Math.max(0, prev - 1)); // Ensure count doesn't go below 0
+    }
+  }
 
   return (
     <article className="rounded-large border border-divider bg-content2 p-4">
@@ -113,6 +180,11 @@ function ReviewItem({ review }: { review: Review }) {
           {expanded ? "Show less" : "Read more"}
         </button>
       )}
+      <Separator className="my-4" />
+      <ToggleButton onChange={(e) => {handleLike(e, userData?.id, Number(review.id))}} isSelected={liked}>
+        <Heart />
+          {count}
+      </ToggleButton>
     </article>
   );
 }
