@@ -2,20 +2,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star, Trash, EllipsisVertical } from "lucide-react";
 import { buttonVariants } from "@heroui/styles";
-import { insertMovieReview, countLikes } from "@/app/(shows)/actions/showActions";
+import { insertMovieReview, countLikes, deleteReview } from "@/app/(shows)/actions/showActions";
 import { authClient } from "@/lib/auth-client";
 import { Separator } from "@heroui/react";
 import { ToggleButton } from '@heroui/react';
-import { userLikes, checkUserLiked } from "@/app/(user)/actions/user";
+import { userLikes, checkUserLiked, userUnlikes } from "@/app/(user)/actions/user";
+import { Button, Dropdown, Label} from "@heroui/react";
 
 export type Review = {
   id: number | string;
   author: string;
   content: string;
   created_at: string;
-  author_details?: { rating?: number | null };
+  author_details?: { rating?: number | null, userId?: string | null };
 };
 
 type Props = {
@@ -71,7 +72,7 @@ function StarRating({
 }
 
 
-function ReviewItem({ review }: { review: Review }) {
+function ReviewItem({ review, onDelete }: { review: Review, onDelete: (userId: string | undefined,  reviewId: number) => Promise<void>}) {
   const userSession = authClient.useSession();
   const userData = userSession.data?.user
   const [expanded, setExpanded] = useState(false);
@@ -117,7 +118,7 @@ function ReviewItem({ review }: { review: Review }) {
 
   async function handleLike(isSelected: boolean, usersId: string | undefined, reviewId: number) {
     if (isSelected) {
-
+      setLiked(true);
       if (!usersId) {
         console.log("User not logged in");
         return;
@@ -138,9 +139,23 @@ function ReviewItem({ review }: { review: Review }) {
 
       
     } else {
-      setCount((prev) => Math.max(0, prev - 1)); // Ensure count doesn't go below 0
+      try {
+        const result = await userUnlikes(usersId!, Number(reviewId));
+        setLiked(false);
+
+        if (!result) {
+          console.log("Failed to unlike review");
+          return;
+        }
+
+        setCount((prev) => Math.max(0, prev - 1)); // Ensure count doesn't go below 0
+      } catch{
+        console.log("Error Bitch!");
+      }
     }
   }
+
+  const isOwner = !!userData?.id && userData.id === review.author_details?.userId;
 
   return (
     <article className="rounded-large border border-divider bg-content2 p-4">
@@ -164,7 +179,7 @@ function ReviewItem({ review }: { review: Review }) {
       </div>
 
       <p
-        className={`mt-3 whitespace-pre-line text-sm text-foreground-400 ${
+        className={`mt-3 whitespace-pre-line text-sm text-foreground-400 px-1 ${
           expanded ? "" : "line-clamp-4"
         }`}
       >
@@ -181,10 +196,37 @@ function ReviewItem({ review }: { review: Review }) {
         </button>
       )}
       <Separator className="my-4" />
-      <ToggleButton onChange={(e) => {handleLike(e, userData?.id, Number(review.id))}} isSelected={liked}>
-        <Heart />
-          {count}
-      </ToggleButton>
+      <div className="flex items-center justify-between">
+        {userData?.id ? (
+          <ToggleButton
+            onChange={(e) => {
+              handleLike(e, userData?.id, Number(review.id));
+            }}
+            isSelected={liked}
+          >
+            <Heart />
+            {count}
+          </ToggleButton>
+        ) : (
+          <span />
+        )}
+
+        {isOwner && (
+          <Dropdown>
+            <Button aria-label="Menu" variant="secondary">
+              <EllipsisVertical />
+            </Button>
+            <Dropdown.Popover>
+              <Dropdown.Menu onAction={(key) => {if (key === "delete-review") onDelete(userData?.id, Number(review.id))}}>
+                <Dropdown.Item id="delete-review" textValue="Delete file" variant="danger">
+                  <Trash />
+                  <Label>Delete Review</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        )}
+      </div>
     </article>
   );
 }
@@ -244,6 +286,21 @@ export default function MovieReviews({ movie, reviews = [], reviewed}: Props) {
       setIsSubmitting(false);
     }
   }
+
+ async function deleteReviewById(userId: string | undefined, reviewId: number) {
+  if (!userId || !reviewId) {
+    console.error("User ID or Review ID is missing");
+    return;
+  }
+
+  try {
+    await deleteReview(userId, reviewId);
+    setItems((prev) => prev.filter((r) => Number(r.id) !== reviewId));
+    setReviewed(false); // brings the "Write a review" form back
+  } catch (error) {
+    console.error("Error deleting review:", error);
+  }
+}
   
   const inputClass =
     "w-full rounded-medium border border-divider bg-content2 px-3 py-2 text-sm outline-none placeholder:text-foreground-500 focus:border-foreground-400";
@@ -294,7 +351,7 @@ export default function MovieReviews({ movie, reviews = [], reviewed}: Props) {
       ) : (
         <div className="grid gap-4">
           {items.slice(0, visible).map((r) => (
-            <ReviewItem key={r.id} review={r} />
+            <ReviewItem key={r.id} review={r} onDelete={deleteReviewById}/>
           ))}
           {visible < items.length && (
             <div>

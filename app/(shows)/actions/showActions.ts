@@ -49,6 +49,7 @@ export async function getMovieReviews(movieId: string) {
             user: {
                 select: {
                     name: true,
+                    id: true
                 }
             },
             rating: true,
@@ -116,6 +117,11 @@ export async function insertTVReview(review: TvReview) {
 }
 
 export async function getTVShowReviews(tv_show_id: string) {
+
+    if (!tv_show_id) {
+        return [];
+    }
+
     const reviews = await prisma.reviews.findMany({
         where: {
             tv_id: tv_show_id
@@ -125,6 +131,7 @@ export async function getTVShowReviews(tv_show_id: string) {
             user: {
                 select: {
                     name: true,
+                    id: true
                 }
             },
             rating: true,
@@ -156,6 +163,11 @@ export async function checkTVShowReviewed(tv_show_id: string, user_id: string) {
 }
 
 export async function countLikes(reviewId: number) {
+
+    if (!reviewId) {
+        return 0;
+    }
+
     const count = await prisma.likes.count({
         where: {
             review_id: reviewId
@@ -163,4 +175,21 @@ export async function countLikes(reviewId: number) {
     });
 
     return count;
+}
+
+export async function deleteReview(userId: string,reviewId: number) { 
+    
+    if (!userId || !reviewId) {
+        console.log("Invalid userId or reviewId");
+        return;
+    }
+
+    const deletedReview = await prisma.reviews.deleteMany({
+        where: {
+            id: reviewId,
+            user_id: userId
+        }
+    });
+
+    return deletedReview;
 }

@@ -55,6 +55,11 @@ export async function getUsersReviews(userId: string) {
 }
 
 export async function getUsersReviewCount(userId: string) {
+
+    if (!userId) {
+        return 0;
+    }
+
     const reviewCount = await prisma.reviews.count({
         where: {
             user_id: userId
@@ -65,6 +70,11 @@ export async function getUsersReviewCount(userId: string) {
 }
 
 export async function userLikes(userId: string, reviewId: number) {
+
+    if (!userId || !reviewId) {
+        return null;
+    }
+
     const liked = await prisma.likes.create({
         data: {
             user_id: userId,
@@ -76,6 +86,11 @@ export async function userLikes(userId: string, reviewId: number) {
 }
 
 export async function userUnlikes(userId: string, reviewId: number) {
+
+    if (!userId || !reviewId) {
+        return null;
+    }
+
     const unliked = await prisma.likes.deleteMany({
         where: {
             user_id: userId,
@@ -88,7 +103,7 @@ export async function userUnlikes(userId: string, reviewId: number) {
 
 export async function checkUserLiked(userId: string | undefined, reviewId: number) {
 
-    if (!userId) {
+    if (!userId || !reviewId) {
         return false;
     }
 
