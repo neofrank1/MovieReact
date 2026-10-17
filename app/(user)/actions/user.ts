@@ -1,7 +1,57 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import userData from "../types/user_type";
+
+type ProfileNameState = {
+    status: "idle" | "success" | "error";
+    message: string;
+};
+
+export async function updateProfileName(
+    _previousState: ProfileNameState,
+    formData: FormData
+): Promise<ProfileNameState> {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session?.user) {
+        return { status: "error", message: "Sign in to update your profile name." };
+    }
+
+    const firstNameValue = formData.get("firstName");
+    const lastNameValue = formData.get("lastName");
+    const firstName = typeof firstNameValue === "string" ? firstNameValue.trim() : "";
+    const lastName = typeof lastNameValue === "string" ? lastNameValue.trim() : "";
+
+    if (!firstName || firstName.length > 40 || lastName.length > 40) {
+        return {
+            status: "error",
+            message: "Enter a first name and keep each name to 40 characters or fewer.",
+        };
+    }
+
+    await prisma.userDetails.upsert({
+        where: { user_id: session.user.id },
+        create: {
+            user_id: session.user.id,
+            first_name: firstName,
+            last_name: lastName || null,
+        },
+        update: {
+            first_name: firstName,
+            last_name: lastName || null,
+        },
+    });
+
+    revalidatePath(`/profile/${session.user.id}`);
+
+    return { status: "success", message: "Your profile name has been updated." };
+}
 
 export async function getUserData({userId} : {userId: string}) {
     if (!userId) {
