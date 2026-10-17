@@ -58,7 +58,8 @@ export const ModelName = {
   Movies: 'Movies',
   TVShow: 'TVShow',
   Reviews: 'Reviews',
-  UserDetails: 'UserDetails'
+  UserDetails: 'UserDetails',
+  Likes: 'Likes'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -176,6 +177,15 @@ export const UserDetailsScalarFieldEnum = {
 } as const
 
 export type UserDetailsScalarFieldEnum = (typeof UserDetailsScalarFieldEnum)[keyof typeof UserDetailsScalarFieldEnum]
+
+
+export const LikesScalarFieldEnum = {
+  id: 'id',
+  review_id: 'review_id',
+  user_id: 'user_id'
+} as const
+
+export type LikesScalarFieldEnum = (typeof LikesScalarFieldEnum)[keyof typeof LikesScalarFieldEnum]
 
 
 export const SortOrder = {

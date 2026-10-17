@@ -52,7 +52,7 @@ export default async function TVDetailsPage({ params }: Props) {
     author: review.user.name || "Movie fan",
     content: review.comment,
     created_at: "",
-    author_details: { rating: review.rating },
+    author_details: { rating: review.rating, userId: String(review.user.id) },
   }));
   const director = data.credits?.crew?.find((c: any) => c.job === "Director");
   const cast = data.credits?.cast?.slice(0, 20) ?? [];

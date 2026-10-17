@@ -53,7 +53,7 @@ export default async function MovieDetailsPage({ params }: Props) {
     author: review.user.name || "Movie fan",
     content: review.comment,
     created_at: "",
-    author_details: { rating: review.rating },
+    author_details: { rating: review.rating, userId: String(review.user.id) },
   }));
   const cast = movie.credits?.cast?.slice(0, 20) ?? [];
   const trailer = movie.videos?.results?.find(

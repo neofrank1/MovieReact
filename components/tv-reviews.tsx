@@ -1,19 +1,23 @@
 // components/movie-reviews.tsx
 "use client";
 
-import { useState } from "react";
-import { Star } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Star, Heart, Trash, EllipsisVertical } from "lucide-react";
 import { buttonVariants } from "@heroui/styles";
-import { insertTVReview } from "@/app/(shows)/actions/showActions";
+import { insertTVReview, countLikes, deleteReview } from "@/app/(shows)/actions/showActions";
 import { authClient } from "@/lib/auth-client";
+import { Separator } from "@heroui/react";
+import { ToggleButton } from '@heroui/react';
+import { userLikes, checkUserLiked, userUnlikes } from "@/app/(user)/actions/user";
+import { Button, Dropdown, Label} from "@heroui/react";
 
 
 export type Review = {
-  id: string;
+  id: number | string;
   author: string;
   content: string;
   created_at: string;
-  author_details?: { rating?: number | null };
+  author_details?: { rating?: number | null, userId?: string | null };
 };
 
 type Props = {
@@ -68,13 +72,92 @@ function StarRating({
   );
 }
 
-function ReviewItem({ review }: { review: Review }) {
-  const [expanded, setExpanded] = useState(false);
-  const long = review.content.length > 320;
-  // TMDB ratings are out of 10, the star display is out of 5
-  const rating = review.author_details?.rating
-    ? review.author_details.rating
-    : 0;
+function ReviewItem({ review, onDelete }: { review: Review, onDelete: (userId: string | undefined,  reviewId: number) => Promise<void>}) {
+   const userSession = authClient.useSession();
+    const userData = userSession.data?.user
+    const [expanded, setExpanded] = useState(false);
+    const [count, setCount] = useState(0);
+    const [liked, setLiked] = useState(false);
+    const long = review.content.length > 320;
+    // TMDB ratings are out of 10, the star display is out of 5
+    const rating = review.author_details?.rating
+      ? review.author_details.rating
+      : 0;
+  
+    useEffect(() => {
+  
+      async function checkLiked() {
+        if (!userData?.id) {
+          setLiked(false);
+          return;
+        }
+  
+        try {
+          const result = await checkUserLiked(userData.id, Number(review.id));
+          setLiked(result);
+        } catch (error) {
+          console.error("Failed to check if user liked the review:", error);
+        }
+      }
+  
+      checkLiked();
+    }, [userData?.id, review.id]);
+    
+    useEffect(() => {
+      async function loadLikes() {
+        try {
+          const result = await countLikes(Number(review.id));
+          setCount(result);
+        } catch (error) {
+          console.error("Failed to load likes:", error);
+        }
+      }
+  
+      loadLikes();
+    }, [review.id]);
+  
+    async function handleLike(isSelected: boolean, usersId: string | undefined, reviewId: number) {
+      console.log("handleLike called with:", { isSelected, usersId, reviewId });
+      if (isSelected) {
+        setLiked(true);
+        if (!usersId) {
+          console.log("User not logged in");
+          return;
+        }
+  
+        try {
+          const result = await userLikes(usersId, Number(reviewId));
+  
+          if (!result) {
+            console.log("Failed to like review");
+            return;
+          }
+        
+          setCount((prev) => prev + 1);
+        } catch {
+          console.log("Error Bitch!");
+        }
+  
+        
+      } else {
+        try {
+          const result = await userUnlikes(usersId!, Number(reviewId));
+          setLiked(false);
+  
+          if (!result) {
+            console.log("Failed to unlike review");
+            return;
+          }
+  
+          setCount((prev) => Math.max(0, prev - 1)); // Ensure count doesn't go below 0
+        } catch{
+          console.log("Error Bitch!");
+        }
+      }
+    }
+
+   const isOwner = !!userData?.id && userData.id === review.author_details?.userId;
+   console.log("isOwner:", isOwner, "userData?.id:", userData?.id, "review.author_details?.userId:", review.author_details?.userId);
 
   return (
     <article className="rounded-large border border-divider bg-content2 p-4">
@@ -114,6 +197,38 @@ function ReviewItem({ review }: { review: Review }) {
           {expanded ? "Show less" : "Read more"}
         </button>
       )}
+      <Separator className="my-4" />
+       <div className="flex items-center justify-between">
+        {userData?.id ? (
+          <ToggleButton
+            onChange={(e) => {
+              handleLike(e, userData?.id, Number(review.id));
+            }}
+            isSelected={liked}
+          >
+            <Heart />
+            {count}
+          </ToggleButton>
+        ) : (
+          <span />
+        )}
+
+        {isOwner && (
+          <Dropdown>
+            <Button aria-label="Menu" variant="secondary">
+              <EllipsisVertical />
+            </Button>
+            <Dropdown.Popover>
+              <Dropdown.Menu onAction={(key) => {if (key === "delete-review") onDelete(userData?.id, Number(review.id))}}>
+                <Dropdown.Item id="delete-review" textValue="Delete file" variant="danger">
+                  <Trash />
+                  <Label>Delete Review</Label>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown>
+        )}
+      </div>
     </article>
   );
 }
@@ -175,6 +290,21 @@ export default function TVReviews({ tv_show, reviews = [], reviewed}: Props) {
     }
   }
 
+   async function deleteReviewById(userId: string | undefined, reviewId: number) {
+    if (!userId || !reviewId) {
+      console.error("User ID or Review ID is missing");
+      return;
+    }
+  
+    try {
+      await deleteReview(userId, reviewId);
+      setItems((prev) => prev.filter((r) => Number(r.id) !== reviewId));
+      setReviewed(false); // brings the "Write a review" form back
+    } catch (error) {
+      console.error("Error deleting review:", error);
+    }
+  }
+
   const inputClass =
     "w-full rounded-medium border border-divider bg-content2 px-3 py-2 text-sm outline-none placeholder:text-foreground-500 focus:border-foreground-400";
 
@@ -225,7 +355,7 @@ export default function TVReviews({ tv_show, reviews = [], reviewed}: Props) {
       ) : (
         <div className="grid gap-4">
           {items.slice(0, visible).map((r) => (
-            <ReviewItem key={r.id} review={r} />
+            <ReviewItem key={r.id} review={r} onDelete={deleteReviewById}/>
           ))}
           {visible < items.length && (
             <div>
